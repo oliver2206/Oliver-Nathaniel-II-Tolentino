@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Story Learning with Speech</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f8ff;
+      overflow: hidden;
+    }
+
+    h1 {
+      color: #4CAF50;
+      margin-top: 20px;
+      font-size: 36px;
+    }
+
+    .story-container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .story-text {
+      font-size: 20px;
+      color: #333;
+      line-height: 1.6;
+      text-align: left;
+      margin-bottom: 20px;
+    }
+
+    .story-button {
+      padding: 15px 25px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      margin-top: 20px;
+    }
+
+    .story-button:hover {
+      background-color: #45a049;
+    }
+
+    .story-background {
+      background-image: url('https://www.w3schools.com/w3images/forest.jpg');
+      background-size: cover;
+      background-position: center;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: -1;
+      opacity: 0.4;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="story-background"></div> <!-- Background image of the story -->
+
+  <h1>Learn With a Story</h1>
+
+  <div class="story-container">
+    <div class="story-text" id="story-text">
+      Click the button to hear the story!
+    </div>
+    
+    <button class="story-button" id="speakButton">Start the Story</button>
+  </div>
+
+  <script>
+    // Get elements from the DOM
+    const speakButton = document.getElementById('speakButton');
+    const storyTextDiv = document.getElementById('story-text');
+
+    // Story content
+    const storyContent = [
+      "Once upon a time, in a forest far away, there lived a wise old owl. The owl was known for its knowledge of the forest and all its creatures. It had many friends, including a curious squirrel named Nutty, and a gentle deer named Daisy.",
+      "One bright morning, Nutty came running to the owl and said, 'Owl, I have a question for you! How do we stay safe in the forest during winter?' The owl thought for a moment, then answered, 'You must always prepare for the cold by gathering food and finding shelter. The forest is full of surprises, but with wisdom, you will stay safe.'",
+      "Nutty smiled and said, 'Thank you, Owl! I will be careful.' Daisy the deer also asked, 'Owl, how do we find food when the snow covers the ground?' The owl replied, 'Look carefully around you, and you'll find seeds, berries, and sometimes even the footprints of animals that have food hidden.'",
+      "And so, Nutty and Daisy learned important lessons about survival in the forest. The owl’s wisdom helped them face the challenges of winter, and they all remained friends through the seasons.",
+      "The end."
+    ];
+
+    // Function to speak the story
+    function speakStory() {
+      let story = storyContent.join(" ");
+      const speech = new SpeechSynthesisUtterance(story);
+      speech.lang = 'en-US';  // You can change this to other languages if needed
+      window.speechSynthesis.speak(speech);
+
+      // Display the story text on the screen as it is being spoken
+      storyTextDiv.innerHTML = storyContent.join("<br><br>");
+    }
+
+    // Event listener for the button
+    speakButton.addEventListener('click', function() {
+      speakStory();  // Speak the story when the button is clicked
+      speakButton.disabled = true;  // Disable the button after it is clicked
+      speakButton.innerHTML = "Story is Playing...";  // Change button text
+    });
+  </script>
+
+</body>
+</html>
