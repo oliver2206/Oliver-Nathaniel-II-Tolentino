@@ -85,7 +85,7 @@
     // Get elements from the DOM
     const speakButton = document.getElementById('speakButton');
     const storyTextDiv = document.getElementById('story-text');
-
+  
     // Story content
     const storyParts = [
       "One bright morning, as the sun’s rays filtered through the branches of the trees, Nutty came running to Zack with a worried look on his face. “Owl, I have a question for you! How do we stay safe in the forest during winter?” he asked, his fluffy tail twitching in anticipation.",
@@ -106,18 +106,19 @@
       "And so, the wise old owl, the curious squirrel, and the gentle deer remained the best of friends, their bond as unbreakable as the trees that surrounded them.",
       "The end."
     ];
-
+  
     // Function to speak the story
     function speakStory() {
       const story = storyParts.join(" ");
       const speech = new SpeechSynthesisUtterance(story);
       speech.lang = 'en-US'; // Set language
+      speech.rate = 0.8; // Adjust the speaking rate (1.0 is normal; lower is slower)
       window.speechSynthesis.speak(speech);
-
+  
       // Display the story text on the screen as it is being spoken
       storyTextDiv.innerHTML = storyParts.join("<br><br>");
     }
-
+  
     // Event listener for the button
     speakButton.addEventListener('click', function () {
       speakStory();
@@ -125,6 +126,6 @@
       speakButton.innerHTML = "Story is Playing...";
     });
   </script>
-
+  
 </body>
 </html>
