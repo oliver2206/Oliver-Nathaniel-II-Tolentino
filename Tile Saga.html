@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catch the Falling Stars</title>
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(to bottom, #001848, #000);
+        color: white;
+      }
+      
+      #game-container {
+        position: relative;
+        width: 100vw;
+        height: 100vh;
+        background: transparent;
+        overflow: hidden;
+      }
+      
+      #basket {
+        position: absolute;
+        bottom: 20px;
+        width: 100px;
+        height: 50px;
+        background: brown;
+        border-radius: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      
+      .star {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        background: gold;
+        border-radius: 50%;
+        animation: fall linear infinite;
+      }
+      
+      #score {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        font-size: 24px;
+      }
+      
+    </style>
+</head>
+<body>
+  <div id="game-container">
+    <div id="basket"></div>
+    <div id="score">Score: 0</div>
+  </div>
+  <script>
+    const gameContainer = document.getElementById("game-container");
+const basket = document.getElementById("basket");
+const scoreDisplay = document.getElementById("score");
+
+let score = 0;
+let gameSpeed = 2000; // Initial speed for stars falling
+
+// Move basket with mouse
+gameContainer.addEventListener("mousemove", (e) => {
+  const basketWidth = basket.offsetWidth;
+  const containerWidth = gameContainer.offsetWidth;
+  let basketX = e.clientX - basketWidth / 2;
+
+  if (basketX < 0) basketX = 0; // Prevent basket from going out of bounds
+  if (basketX > containerWidth - basketWidth) basketX = containerWidth - basketWidth;
+
+  basket.style.left = `${basketX}px`;
+});
+
+// Create a falling star
+function createStar() {
+  const star = document.createElement("div");
+  star.classList.add("star");
+
+  const containerWidth = gameContainer.offsetWidth;
+  star.style.left = `${Math.random() * (containerWidth - 20)}px`;
+
+  gameContainer.appendChild(star);
+
+  let fallDuration = gameSpeed / 1000;
+  star.style.animationDuration = `${fallDuration}s`;
+
+  // Remove star if it falls out of the container
+  star.addEventListener("animationend", () => {
+    star.remove();
+  });
+
+  // Check for collision with basket
+  const checkCollision = setInterval(() => {
+    const starRect = star.getBoundingClientRect();
+    const basketRect = basket.getBoundingClientRect();
+
+    if (
+      starRect.bottom >= basketRect.top &&
+      starRect.left <= basketRect.right &&
+      starRect.right >= basketRect.left
+    ) {
+      score++;
+      scoreDisplay.textContent = `Score: ${score}`;
+      star.remove();
+      clearInterval(checkCollision);
+
+      // Speed up the game every 5 points
+      if (score % 5 === 0) {
+        gameSpeed = Math.max(500, gameSpeed - 200);
+      }
+    }
+  }, 50);
+}
+
+// Continuously generate stars
+function startGame() {
+  setInterval(createStar, gameSpeed);
+}
+
+startGame();
+
+  </script>
+</body>
+</html>
