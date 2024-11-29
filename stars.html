@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tile Saga</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    #game-container {
+      text-align: center;
+    }
+
+    #level {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 10px;
+      justify-content: center;
+      margin: 0 auto;
+    }
+
+    .tile {
+      width: 50px;
+      height: 50px;
+      background-color: #3498db;
+      border: 2px solid #2980b9;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .tile.active {
+      background-color: #2ecc71;
+    }
+
+    #message {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container">
+    <div id="level">Level: 1</div>
+    <div class="grid" id="grid"></div>
+    <div id="message"></div>
+  </div>
+
+  <script>
+    const grid = document.getElementById('grid');
+    const levelDisplay = document.getElementById('level');
+    const messageDisplay = document.getElementById('message');
+
+    let level = 1;
+    let activeTiles = [];
+    let clickedTiles = [];
+
+    function generateGrid(size) {
+      grid.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+      grid.style.gridTemplateRows = `repeat(${size}, 1fr)`;
+      grid.innerHTML = '';
+
+      for (let i = 0; i < size * size; i++) {
+        const tile = document.createElement('div');
+        tile.classList.add('tile');
+        tile.addEventListener('click', () => handleTileClick(tile));
+        grid.appendChild(tile);
+      }
+    }
+
+    function startLevel() {
+      levelDisplay.textContent = `Level: ${level}`;
+      messageDisplay.textContent = 'Memorize the green tiles!';
+      clickedTiles = [];
+      activeTiles = [];
+
+      const gridSize = Math.min(level + 2, 6); // Grid size increases with level
+      generateGrid(gridSize);
+
+      // Randomly activate tiles
+      const tiles = document.querySelectorAll('.tile');
+      for (let i = 0; i < level + 1; i++) {
+        const randomIndex = Math.floor(Math.random() * tiles.length);
+        if (!activeTiles.includes(randomIndex)) {
+          activeTiles.push(randomIndex);
+          tiles[randomIndex].classList.add('active');
+        }
+      }
+
+      // Deactivate tiles after 2 seconds
+      setTimeout(() => {
+        tiles.forEach(tile => tile.classList.remove('active'));
+        messageDisplay.textContent = 'Now click the tiles you saw!';
+      }, 2000);
+    }
+
+    function handleTileClick(tile) {
+      const index = Array.from(grid.children).indexOf(tile);
+      if (!clickedTiles.includes(index)) {
+        clickedTiles.push(index);
+      }
+
+      if (activeTiles.includes(index)) {
+        tile.style.backgroundColor = '#2ecc71'; // Correct click
+      } else {
+        tile.style.backgroundColor = '#e74c3c'; // Wrong click
+      }
+
+      if (clickedTiles.length === activeTiles.length) {
+        checkLevelCompletion();
+      }
+    }
+
+    function checkLevelCompletion() {
+      if (
+        clickedTiles.sort().toString() === activeTiles.sort().toString()
+      ) {
+        messageDisplay.textContent = 'Correct! Moving to the next level.';
+        level++;
+        setTimeout(startLevel, 1000);
+      } else {
+        messageDisplay.textContent = 'Game Over! Refresh to try again.';
+        grid.innerHTML = '';
+      }
+    }
+
+    // Start the first level
+    startLevel();
+  </script>
+</body>
+</html>
