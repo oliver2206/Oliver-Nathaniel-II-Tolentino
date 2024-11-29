@@ -10,7 +10,6 @@
       text-align: center;
       margin: 0;
       padding: 0;
-      background-color: #f0f8ff;
       overflow: hidden;
     }
 
@@ -24,9 +23,11 @@
       max-width: 800px;
       margin: 20px auto;
       padding: 20px;
-      background-color: #fff;
+      background-color: #fdfdfd00;
       border-radius: 15px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      max-height: 400px; /* Limit the height */
+      overflow-y: auto; /* Enable vertical scrolling */
     }
 
     .story-text {
@@ -53,7 +54,7 @@
     }
 
     .story-background {
-      background-image: url('https://www.w3schools.com/w3images/forest.jpg');
+      background-image: url('./PNGFILE/OWLBG.webp');
       background-size: cover;
       background-position: center;
       position: absolute;
@@ -64,7 +65,6 @@
       z-index: -1;
       opacity: 0.4;
     }
-
   </style>
 </head>
 <body>
@@ -87,45 +87,45 @@
     const storyTextDiv = document.getElementById('story-text');
 
     // Story content
-   const storyParts = [
-    "One bright morning, as the sun’s rays filtered through the branches of the trees, Nutty came running to Zack with a worried look on his face. “Owl, I have a question for you! How do we stay safe in the forest during winter?” he asked, his fluffy tail twitching in anticipation.",
-    "Zack perched on a low branch, his wise eyes gleaming with warmth. He thought for a moment before responding. “You must always prepare for the cold by gathering food and finding shelter. The forest can be a challenging place during winter, but with patience and wisdom, you will know what to do. You must listen to the wind and feel the rhythm of the forest to understand what it needs.”",
-    "Nutty's eyes widened as he listened carefully. “So, I should gather food before it gets too cold?”",
-    "“Yes,” Zack nodded. “The more you prepare, the better you will fare. But remember, the forest is full of surprises. When the snow falls, many of your favorite foods might be hidden, but don’t lose hope. Look for the seeds buried under the snow, or the small berries left on the trees that the birds didn’t find. The forest provides, if you know where to look.”",
-    "Nutty smiled and nodded excitedly. “Thank you, Owl! I will be careful and gather plenty of food!”",
-    "Just as Nutty was about to scurry off, Daisy the deer approached. She stood with her elegant antlers swaying gently in the breeze, her soft eyes looking worried. “Owl, I have a question too,” she said. “How do we find food when the snow covers the ground and everything seems so still?”",
-    "Zack smiled kindly at her. “Ah, yes, the challenge of winter. When the snow covers the forest, it’s harder to find food, but it’s not impossible. Look closely at the ground. The snow can reveal secrets. Sometimes, you’ll find the footprints of animals who have hidden food, like rabbits or foxes. And remember, there’s always something to be found in the trees. Look for the frozen berries or seeds left behind by the wind.”",
-    "Daisy’s face brightened. “Thank you, Owl. I will be more observant and careful in the coming days.”",
-    "As the weeks passed, Nutty and Daisy learned many valuable lessons from Zack. They worked together to gather food, found new shelters under the thick branches of evergreens, and learned how to stay warm by huddling together at night. They discovered hidden groves of winter berries and even helped each other find the footprints of hidden caches of food.",
-    "One day, as the first snowflakes of the season began to fall, Nutty and Daisy met at their usual spot near the old oak tree, where Zack often rested.",
-    "“Look,” said Nutty, pointing to the trees. “I see the footprints of the birds! They’ve left some seeds behind.”",
-    "Daisy nodded. “And I think I found a safe place to rest, under that thick bush. It’ll keep us warm.”",
-    "Zack, who had been silently watching his friends, flew down and landed softly between them. “Well done, my friends. You’ve learned the most important lesson of all: when you work together and pay attention to the signs of nature, you will always find what you need.”",
-    "Nutty and Daisy beamed with pride. The winter passed, and the trio of friends grew even closer. Together, they faced the challenges of the season, always relying on each other and the wisdom of the forest.",
-    "As spring arrived, the forest began to awaken with new life. Flowers bloomed, the air warmed, and the snow slowly melted. But Zack, Nutty, and Daisy knew that the lessons they had learned in winter would stay with them forever. They had learned how to survive, how to care for one another, and how to find hope even in the coldest of times.",
-    "And so, the wise old owl, the curious squirrel, and the gentle deer remained the best of friends, their bond as unbreakable as the trees that surrounded them.",
-    "The end."
-];
-
+    const storyParts = [
+      "One bright morning, as the sun’s rays filtered through the branches of the trees, Nutty came running to Zack with a worried look on his face. “Owl, I have a question for you! How do we stay safe in the forest during winter?” he asked, his fluffy tail twitching in anticipation.",
+      "Zack perched on a low branch, his wise eyes gleaming with warmth. He thought for a moment before responding. “You must always prepare for the cold by gathering food and finding shelter. The forest can be a challenging place during winter, but with patience and wisdom, you will know what to do. You must listen to the wind and feel the rhythm of the forest to understand what it needs.”",
+      "Nutty's eyes widened as he listened carefully. “So, I should gather food before it gets too cold?”",
+      "“Yes,” Zack nodded. “The more you prepare, the better you will fare. But remember, the forest is full of surprises. When the snow falls, many of your favorite foods might be hidden, but don’t lose hope. Look for the seeds buried under the snow, or the small berries left on the trees that the birds didn’t find. The forest provides, if you know where to look.”",
+      "Nutty smiled and nodded excitedly. “Thank you, Owl! I will be careful and gather plenty of food!”",
+      "Just as Nutty was about to scurry off, Daisy the deer approached. She stood with her elegant antlers swaying gently in the breeze, her soft eyes looking worried. “Owl, I have a question too,” she said. “How do we find food when the snow covers the ground and everything seems so still?”",
+      "Zack smiled kindly at her. “Ah, yes, the challenge of winter. When the snow covers the forest, it’s harder to find food, but it’s not impossible. Look closely at the ground. The snow can reveal secrets. Sometimes, you’ll find the footprints of animals who have hidden food, like rabbits or foxes. And remember, there’s always something to be found in the trees. Look for the frozen berries or seeds left behind by the wind.”",
+      "Daisy’s face brightened. “Thank you, Owl. I will be more observant and careful in the coming days.”",
+      "As the weeks passed, Nutty and Daisy learned many valuable lessons from Zack. They worked together to gather food, found new shelters under the thick branches of evergreens, and learned how to stay warm by huddling together at night. They discovered hidden groves of winter berries and even helped each other find the footprints of hidden caches of food.",
+      "One day, as the first snowflakes of the season began to fall, Nutty and Daisy met at their usual spot near the old oak tree, where Zack often rested.",
+      "“Look,” said Nutty, pointing to the trees. “I see the footprints of the birds! They’ve left some seeds behind.”",
+      "Daisy nodded. “And I think I found a safe place to rest, under that thick bush. It’ll keep us warm.”",
+      "Zack, who had been silently watching his friends, flew down and landed softly between them. “Well done, my friends. You’ve learned the most important lesson of all: when you work together and pay attention to the signs of nature, you will always find what you need.”",
+      "Nutty and Daisy beamed with pride. The winter passed, and the trio of friends grew even closer. Together, they faced the challenges of the season, always relying on each other and the wisdom of the forest.",
+      "As spring arrived, the forest began to awaken with new life. Flowers bloomed, the air warmed, and the snow slowly melted. But Zack, Nutty, and Daisy knew that the lessons they had learned in winter would stay with them forever. They had learned how to survive, how to care for one another, and how to find hope even in the coldest of times.",
+      "And so, the wise old owl, the curious squirrel, and the gentle deer remained the best of friends, their bond as unbreakable as the trees that surrounded them.",
+      "The end."
+    ];
 
     // Function to speak the story
     function speakStory() {
-      let story = storyContent.join(" ");
+      const story = storyParts.join(" ");
       const speech = new SpeechSynthesisUtterance(story);
-      speech.lang = 'en-US';  // You can change this to other languages if needed
+      speech.lang = 'en-US'; // Set language
       window.speechSynthesis.speak(speech);
 
       // Display the story text on the screen as it is being spoken
-      storyTextDiv.innerHTML = storyContent.join("<br><br>");
+      storyTextDiv.innerHTML = storyParts.join("<br><br>");
     }
 
     // Event listener for the button
-    speakButton.addEventListener('click', function() {
-      speakStory();  // Speak the story when the button is clicked
-      speakButton.disabled = true;  // Disable the button after it is clicked
-      speakButton.innerHTML = "Story is Playing...";  // Change button text
+    speakButton.addEventListener('click', function () {
+      speakStory();
+      speakButton.disabled = true;
+      speakButton.innerHTML = "Story is Playing...";
     });
   </script>
 
 </body>
 </html>
+
