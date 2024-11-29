@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Card Sound</title>
+  <title>Card Sound and Spelling</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -71,11 +71,18 @@
     .card.show-image img {
       display: block; /* Show image when the card is clicked */
     }
+
+    .spelled-out {
+      font-size: 30px;
+      font-weight: bold;
+      margin-top: 20px;
+      color: #333;
+    }
   </style>
 </head>
 <body>
 
-  <h1>Card to Hear</h1>
+  <h1>Card to Hear and Spell</h1>
 
   <div class="game-container">
     <div class="card" data-name="Apple">
@@ -144,9 +151,12 @@
     </div>
   </div>
 
+  <div class="spelled-out" id="spelled-out"></div>
+
   <script>
     // Initialize game elements
     const cards = document.querySelectorAll('.card');
+    const spelledOutDiv = document.getElementById('spelled-out');
     let lastClickedName = ''; // Variable to hold the name of the last clicked card
 
     // Function to spell the word by letters with a delay and show the image
@@ -162,12 +172,17 @@
       // Show the image of the clicked card
       card.classList.add('show-image');
 
+      // Reset the displayed spelled-out word on screen
+      spelledOutDiv.innerHTML = '';
+
       // Delay between each letter
       let delay = 500;
 
       // Spell the word letter by letter
       for (let i = 0; i < cardName.length; i++) {
         setTimeout(() => {
+          // Add each letter to the screen
+          spelledOutDiv.innerHTML += cardName[i] + ' ';
           const letterSpeech = new SpeechSynthesisUtterance(cardName[i]);
           letterSpeech.lang = 'en-US';
           speechSynthesis.speak(letterSpeech);
@@ -181,16 +196,16 @@
     }
 
     // Function to update the name of the last clicked card and speak it
-    function updateAndSpeakCard(cardName) {
+    function updateAndSpeakCard(cardName, card) {
       lastClickedName = cardName;
-      speakCardName(cardName); // Speak the most recent card name
+      speakCardName(cardName, card); // Speak the most recent card name and spell it
     }
 
     // Add event listeners to each card
     cards.forEach(card => {
       card.addEventListener('click', function() {
         const cardName = card.getAttribute('data-name');
-        updateAndSpeakCard(cardName); // Update the last clicked name and speak it
+        updateAndSpeakCard(cardName, card); // Update the last clicked name and speak it
       });
     });
   </script>
