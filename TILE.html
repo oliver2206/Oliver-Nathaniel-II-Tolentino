@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tile Flip Challenge</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background-image: url('https://i.pinimg.com/736x/e3/a4/48/e3a4482bff09d997f675af868e43ff2b.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        h1 {
+            margin-top: 20px;
+            color: white;
+        }
+
+        .game-container {
+            display: grid;
+            grid-template-columns: repeat(6, 90px);
+            gap: 10px;
+            justify-content: center;
+            margin: 50px auto;
+        }
+
+        .tile {
+            width: 90px;
+            height: 90px;
+            background-image: url('./PNGFILE/TILE.png');
+            background-size: cover;
+            background-position: center;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .tile:active {
+            transform: scale(0.9);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .tile.revealed {
+            background-color: #f5faf6;
+            cursor: default;
+            background-image: none;
+        }
+
+        .tile.matched {
+            background-color: #90ee90;
+            cursor: default;
+            background-image: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tile Flip Challenge</h1>
+    <div class="game-container" id="gameContainer"></div>
+    <script>
+        const symbols = ['🍎', '🍌', '🍇', '🍉', '🍒', '🍓', '🍍', '🥝', '🍑', 
+                         '🥭', '🍋', '🍏', '🍐', '🥥', '🥕', '🌽', '🍅', '🍆'];
+
+        let tiles, gameContainer, firstTile = null, secondTile = null, matches = 0, gameStarted = false, totalPairs;
+
+        function initializeGame() {
+            const savedState = localStorage.getItem('tileFlipGameState');
+            if (savedState) {
+                loadGameProgress();
+            } else {
+                startNewGame();
+            }
+        }
+
+        function startNewGame() {
+            tiles = [...symbols, ...symbols].sort(() => Math.random() - 0.5);
+            totalPairs = tiles.length / 2;
+            matches = 0;
+            firstTile = null;
+            secondTile = null;
+            gameStarted = false;
+
+            renderTiles();
+            revealAllTiles();
+        }
+
+        function renderTiles() {
+            gameContainer = document.getElementById('gameContainer');
+            gameContainer.innerHTML = '';
+            tiles.forEach((symbol, index) => {
+                const tile = createTile(symbol, index);
+                gameContainer.appendChild(tile);
+            });
+        }
+
+        function createTile(symbol, index) {
+            const tile = document.createElement('div');
+            tile.classList.add('tile');
+            tile.dataset.symbol = symbol;
+            tile.dataset.index = index;
+            tile.addEventListener('click', () => handleTileClick(tile));
+            return tile;
+        }
+
+        function revealAllTiles() {
+            const allTiles = document.querySelectorAll('.tile');
+            allTiles.forEach(tile => {
+                tile.classList.add('revealed');
+                tile.textContent = tile.dataset.symbol;
+            });
+
+            setTimeout(() => {
+                allTiles.forEach(tile => {
+                    tile.classList.remove('revealed');
+                    tile.textContent = '';
+                });
+                gameStarted = true;
+            }, 5000);
+        }
+
+        function handleTileClick(tile) {
+            if (!gameStarted || tile.classList.contains('revealed') || tile.classList.contains('matched') || secondTile) {
+                return;
+            }
+
+            tile.classList.add('revealed');
+            tile.textContent = tile.dataset.symbol;
+
+            if (!firstTile) {
+                firstTile = tile;
+            } else {
+                secondTile = tile;
+                if (firstTile.dataset.symbol === secondTile.dataset.symbol) {
+                    firstTile.classList.add('matched');
+                    secondTile.classList.add('matched');
+
+                    firstTile = null;
+                    secondTile = null;
+                    matches++;
+                    checkWin();
+                } else {
+                    setTimeout(() => {
+                        firstTile.classList.remove('revealed');
+                        firstTile.textContent = '';
+                        secondTile.classList.remove('revealed');
+                        secondTile.textContent = '';
+                        firstTile = null;
+                        secondTile = null;
+                    }, 1000);
+                }
+            }
+            saveGameProgress();
+        }
+
+        function checkWin() {
+            if (matches === totalPairs) {
+                setTimeout(() => {
+                    startNewGame();
+                }, 1000);
+            }
+        }
+
+        function saveGameProgress() {
+            const gameState = {
+                tiles,
+                matches,
+                gameStarted,
+                totalPairs,
+            };
+            localStorage.setItem('tileFlipGameState', JSON.stringify(gameState));
+        }
+
+        function loadGameProgress() {
+            const savedState = JSON.parse(localStorage.getItem('tileFlipGameState'));
+            tiles = savedState.tiles;
+            matches = savedState.matches;
+            gameStarted = savedState.gameStarted;
+            totalPairs = savedState.totalPairs;
+
+            renderTiles();
+        }
+
+        window.onload = initializeGame;
+    </script>
+</body>
+</html>

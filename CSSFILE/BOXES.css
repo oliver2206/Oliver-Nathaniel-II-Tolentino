@@ -1,0 +1,55 @@
+/* General styles for the section */
+.features {
+    padding: 20px;
+    text-align: center;
+}
+
+.features h3 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Style for each feature item */
+.feature-item {
+    display: inline-block;
+    width: 280px; /* Adjust width as needed */
+    padding: 20px;
+    margin: 15px;
+    background-color: #f4f4f4;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-decoration: none; /* Remove underline from links */
+    color: #333; /* Default text color */
+    transition: all 0.3s ease;
+    box-sizing: border-box; /* Ensures padding doesn't affect overall width */
+}
+
+.feature-item h4 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #ff9800; /* Highlight color */
+}
+
+.feature-item p {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.5;
+}
+
+/* Hover effect for the feature items */
+.feature-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+    background-color: #fff;
+}
+
+/* Responsive design: stack items on smaller screens */
+@media (max-width: 768px) {
+    .feature-item {
+        width: 100%; /* Full width on smaller screens */
+        margin: 10px 0;
+    }
+}

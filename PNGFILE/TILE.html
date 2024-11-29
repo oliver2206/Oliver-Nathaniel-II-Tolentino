@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tile Flip Challenge</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background-image: url('https://i.pinimg.com/736x/e3/a4/48/e3a4482bff09d997f675af868e43ff2b.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        h1 {
+            margin-top: 20px;
+            color: white;
+        }
+
+        .game-container {
+            display: grid;
+            grid-template-columns: repeat(6, 90px);
+            gap: 10px;
+            justify-content: center;
+            margin: 50px auto;
+        }
+
+        .tile {
+            width: 90px;
+            height: 90px;
+            background-image: url('TILE.png');
+            background-size: cover;
+            background-position: center;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .tile:active {
+            transform: scale(0.9);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .tile.revealed {
+            background-color: #f5faf6;
+            cursor: default;
+            background-image: none;
+        }
+
+        .tile.matched {
+            background-color: #90ee90;
+            cursor: default;
+            background-image: none;
+        }
+
+        .coin-icon {
+            font-size: 24px;
+            color: gold;
+        }
+
+        .message {
+            margin-top: 20px;
+            font-size: 18px;
+            color: white;
+        }
+
+        .coin-vase {
+            width: 200px;
+            height: 100px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            font-size: 24px;
+            color: #333;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+        }
+
+        .coin-vase .coin-icon {
+            font-size: 30px;
+            color: gold;
+        }
+
+        .save-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .save-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    
+    <h1>Tile Flip Challenge</h1>
+    <div class="coin-vase" id="coinVase">
+        <span class="coin-icon">💰</span> <span id="coinCount">0</span> Coins
+    </div>
+    <div class="game-container" id="gameContainer"></div>
+    <div class="message" id="message">Find all the matching pairs!</div>
+    <button class="save-button" id="saveButton">Save and Exit</button>
+    <button class="save-button" id="resetButton">Reset Tiles</button>
+
+    <script>
+        
+        const symbols = ['🍎', '🍌', '🍇', '🍉', '🍒', '🍓', '🍍', '🥝', '🍑', 
+                 '🥭', '🍋', '🍏', '🍐', '🥥', '🥕', '🌽', '🍅', '🍆'];
+
+let tiles, gameContainer, firstTile = null, secondTile = null, matches = 0, gameStarted = false, totalPairs;
+let coinCount = 0;
+let coinTiles = [];
+let savedState = {}; // To store and reload game state
+
+// Load saved game state from localStorage
+function loadSavedData() {
+    const savedStateJSON = localStorage.getItem('gameState');
+    if (savedStateJSON) {
+        savedState = JSON.parse(savedStateJSON);
+        coinCount = savedState.coinCount || 0;
+        matches = savedState.matches || 0;
+        coinTiles = savedState.coinTiles || [];
+        tiles = savedState.tiles || [...symbols, ...symbols].sort(() => Math.random() - 0.5);
+        gameStarted = true;
+        updateCoinCount();
+        reloadGameState();
+    } else {
+        initializeGame();
+    }
+}
+
+// Save game state to localStorage
+function saveData() {
+    const tileStates = Array.from(document.querySelectorAll('.tile')).map(tile => ({
+        symbol: tile.dataset.symbol,
+        matched: tile.classList.contains('matched'),
+        revealed: tile.classList.contains('revealed')
+    }));
+    savedState = {
+        coinCount,
+        matches,
+        coinTiles,
+        tiles,
+        tileStates
+    };
+    localStorage.setItem('gameState', JSON.stringify(savedState));
+    alert('Game progress saved!');
+    window.location.href = 'Let\'s Learn and Play!.html'; // Redirect to the specified page
+}
+
+// Initialize a new game
+function initializeGame() {
+    tiles = [...symbols, ...symbols].sort(() => Math.random() - 0.5);
+    totalPairs = tiles.length / 2;
+    matches = 0;
+    firstTile = null;
+    secondTile = null;
+    gameStarted = false;
+
+    coinTiles = [];
+    while (coinTiles.length < 15) {
+        const randomIndex = Math.floor(Math.random() * tiles.length);
+        if (!coinTiles.includes(tiles[randomIndex])) {
+            coinTiles.push(tiles[randomIndex]);
+        }
+    }
+
+    renderTiles();
+    revealAllTiles();
+}
+
+// Reload game state from saved data
+function reloadGameState() {
+    renderTiles();
+    const allTiles = document.querySelectorAll('.tile');
+    savedState.tileStates.forEach((state, index) => {
+        const tile = allTiles[index];
+        if (state.matched) {
+            tile.classList.add('matched');
+            tile.textContent = state.symbol;
+        } else if (state.revealed) {
+            tile.classList.add('revealed');
+            tile.textContent = coinTiles.includes(state.symbol) ? `${state.symbol} 💰` : state.symbol;
+        }
+    });
+}
+
+// Render tiles
+function renderTiles() {
+    gameContainer = document.getElementById('gameContainer');
+    gameContainer.innerHTML = '';
+    tiles.forEach((symbol, index) => {
+        const tile = createTile(symbol, index);
+        gameContainer.appendChild(tile);
+    });
+}
+
+// Create a tile element
+function createTile(symbol, index) {
+    const tile = document.createElement('div');
+    tile.classList.add('tile');
+    tile.dataset.symbol = symbol;
+    tile.dataset.index = index;
+    tile.addEventListener('click', () => handleTileClick(tile));
+    return tile;
+}
+
+// Reveal all tiles temporarily
+function revealAllTiles() {
+    const allTiles = document.querySelectorAll('.tile');
+    allTiles.forEach(tile => {
+        tile.classList.add('revealed');
+        tile.textContent = coinTiles.includes(tile.dataset.symbol)
+            ? `${tile.dataset.symbol} 💰`
+            : tile.dataset.symbol;
+    });
+
+    setTimeout(() => {
+        allTiles.forEach(tile => {
+            tile.classList.remove('revealed');
+            tile.textContent = '';
+        });
+        gameStarted = true;
+    }, 5000);
+}
+
+// Handle tile click
+function handleTileClick(tile) {
+    if (!gameStarted || tile.classList.contains('revealed') || tile.classList.contains('matched') || secondTile) {
+        return;
+    }
+
+    tile.classList.add('revealed');
+    tile.textContent = coinTiles.includes(tile.dataset.symbol)
+        ? `${tile.dataset.symbol} 💰`
+        : tile.dataset.symbol;
+
+    if (!firstTile) {
+        firstTile = tile;
+    } else {
+        secondTile = tile;
+        if (firstTile.dataset.symbol === secondTile.dataset.symbol) {
+            firstTile.classList.add('matched');
+            secondTile.classList.add('matched');
+
+            if (coinTiles.includes(firstTile.dataset.symbol)) {
+                coinCount++;
+                updateCoinCount();
+            }
+
+            firstTile = null;
+            secondTile = null;
+            matches++;
+            checkWin();
+        } else {
+            setTimeout(() => {
+                firstTile.classList.remove('revealed');
+                firstTile.textContent = '';
+                secondTile.classList.remove('revealed');
+                secondTile.textContent = '';
+                firstTile = null;
+                secondTile = null;
+            }, 1000);
+        }
+    }
+}
+
+// Update coin count
+function updateCoinCount() {
+    document.getElementById('coinCount').textContent = coinCount;
+}
+
+// Check if the game is won
+function checkWin() {
+    if (matches === totalPairs) {
+        coinCount += 10;
+        updateCoinCount();
+
+        document.getElementById('message').textContent = 'Round complete! Adding 10 coins and starting a new round...';
+        setTimeout(() => {
+            initializeGame();
+            document.getElementById('message').textContent = 'Find all the matching pairs!';
+        }, 2000);
+    }
+}
+
+// Reset the game with coins validation
+function resetTiles() {
+    if (coinCount < 1) {
+        if (coinCount > 0) {
+            document.getElementById('message').textContent = `Not enough coins! You need at least 5 coins to restart. Currently, you have ${coinCount} coins.`;
+        } else {
+            document.getElementById('message').textContent = 'No coins available! Earn more coins to restart the game.';
+        }
+        return;
+    }
+
+    coinCount -= 1;
+    updateCoinCount(); // Update the coin count display
+    document.getElementById('message').textContent = '5 coins deducted for restarting the game!';
+
+    tiles = [...symbols, ...symbols].sort(() => Math.random() - 0.5); // Reshuffle tiles
+    matches = 0; // Reset matches
+    firstTile = null;
+    secondTile = null;
+
+    renderTiles();
+    revealAllTiles();
+    document.getElementById('message').textContent += ' Find all the matching pairs!';
+}
+
+// Event listeners
+document.getElementById('saveButton').addEventListener('click', saveData);
+document.getElementById('resetButton').addEventListener('click', resetTiles);
+
+// On page load
+window.onload = loadSavedData;
+function saveGameAndExit() {
+    // Gather the game state data
+    const tileStates = Array.from(document.querySelectorAll('.tile')).map(tile => ({
+        symbol: tile.dataset.symbol,
+        matched: tile.classList.contains('matched'),
+        revealed: tile.classList.contains('revealed'),
+    }));
+
+    const gameState = {
+        coinCount,
+        matches,
+        tiles,
+        coinTiles,
+        tileStates,
+    };
+
+    // Save the game state to localStorage
+    localStorage.setItem('gameState', JSON.stringify(gameState));
+    alert('Game progress saved! Redirecting to "Let’s Learn and Play!" page.');
+
+    // Redirect to Let’s Learn and Play!.html
+    window.location.href = 'Let’s Learn and Play!.html';
+}
+
+// Function to navigate to "Tile.html"
+function goToTilePage() {
+    // Redirect to Tile.html
+    window.location.href = 'Tile.html';
+}
+
+// Example: Attach these functions to buttons
+document.getElementById('saveButton').addEventListener('click', saveGameAndExit);
+
+// Assuming there’s a link or button for navigating to Tile.html
+const tilePageLink = document.getElementById('tilePageLink');
+if (tilePageLink) {3
+    tilePageLink.addEventListener('click', goToTilePage);
+}
+// Modify checkWin function to give a bonus of 15 coins after completing a round
+function checkWin() {
+    if (matches === totalPairs) {
+        coinCount += 10; // Award 10 coins after completing a round
+        coinCount += 15; // Add a bonus of 15 coins after the round
+        updateCoinCount(); // Update the displayed coin count
+
+        // Show message with bonus coins
+        document.getElementById('message').textContent = `Round complete! You earned 10 coins and a bonus of 15 coins! Starting a new round...`;
+
+        // Wait for a while before starting a new round
+        setTimeout(() => {
+            initializeGame(); // Start a new round
+            document.getElementById('message').textContent = 'Find all the matching pairs!';
+        }, 2000); // Delay of 2 seconds to show the message before restarting
+    }
+}
+
+function initializeGame() {
+    // Increase the number of pairs based on the level
+    const numPairs = level + 5;  // Number of pairs increases with each level
+    const availableSymbols = [...symbols];  // Make sure the base symbols are available
+    tiles = [];
+
+    // Add a larger number of pairs for the current level
+    for (let i = 0; i < numPairs; i++) {
+        // Ensure there are enough symbols available
+        const symbol = availableSymbols[i % availableSymbols.length];
+        tiles.push(symbol, symbol); // Each symbol appears twice
+    }
+
+    tiles = tiles.sort(() => Math.random() - 0.5); // Shuffle the tiles randomly
+    totalPairs = tiles.length / 2; // Total pairs are half the number of tiles
+    matches = 0;
+    firstTile = null;
+    secondTile = null;
+    gameStarted = false;
+
+    coinTiles = [];
+    while (coinTiles.length < 15) {
+        const randomIndex = Math.floor(Math.random() * tiles.length);
+        if (!coinTiles.includes(tiles[randomIndex])) {
+            coinTiles.push(tiles[randomIndex]);
+        }
+    }
+
+    renderTiles();
+    revealAllTiles();
+}
+
+    </script>
+    

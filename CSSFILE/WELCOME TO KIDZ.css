@@ -1,0 +1,66 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    background-image: url(./PNGFILE/bg.pnG);
+    color: #333;
+    line-height: 1.6;
+}
+
+header {
+    background-color: #ffcc00; /* Bright yellow */
+    padding: 20px 0; /* Adds some space inside the header */
+    text-align: center;
+    width: 100%; /* Ensures full width */
+    position: relative; /* Allows other elements to follow */
+}
+
+header h1 {
+    font-size: 2.5em;
+    color: #fff;
+    margin: 0; /* Removes unwanted margins */
+}
+
+header .logo {
+    height: 60px; 
+    width: auto; 
+    max-width: 100%; 
+    display: block;
+    margin: 10px auto; /* Ensures proper centering */
+}
+
+nav {
+    background-color: #ffcc00; /* Matches header color */
+    padding: 10px 0;
+    margin-top: -5px; /* Fix gap if there is one */
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: center; /* Center-aligns navigation */
+}
+
+nav ul li {
+    display: inline;
+    margin: 0 15px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 1.2em;
+    padding: 5px 10px;
+    border-radius: 5px;
+    background-color: #008CBA;
+    transition: background-color 0.3s ease;
+}
+
+nav ul li a:hover {
+    background-color: #006F84;
+}

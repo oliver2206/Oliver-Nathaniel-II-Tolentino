@@ -1,0 +1,39 @@
+
+.abouts a img {
+    width: 120px;
+    height: auto; /* Maintain aspect ratio */
+    display: block; /* Ensures the image is treated as a block element */
+    margin: 0 auto; /* Centers the logo horizontally */
+    border-radius: 50%; /* Optional: Makes the logo circular */
+    box-shadow: 0 4px 6px rgba(230, 7, 7, 0.1); /* Adds a subtle shadow for depth */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition effects */
+}
+
+.abouts a img:hover {
+    transform: scale(1.1); /* Slight zoom-in effect on hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Stronger shadow on hover */
+}
+.abouts {
+    padding: 100px 80px; /* Space inside the section */
+    background-image: url(./PNGFILE/bg.png); /* Background styling */
+    background-size: cover; /* Ensure the background fully covers the section */
+    background-repeat: no-repeat; /* Prevent the background from repeating */
+    background-position: center; /* Center-align background */
+    text-align: center; /* Center-align text */
+    margin: 0; /* Remove default margin for full width */
+    border-radius: 0; /* Remove rounded corners for edge-to-edge background */
+    box-shadow: none; /* Optional: Remove shadow for a cleaner look */
+    width: 100%; /* Ensure the section spans the full width */
+}
+
+
+
+
+.about-image {
+    width: 45%; /* Image takes 45% of the container */
+    max-width: 300px; /* Restrict maximum width */
+    border-radius: 10px; /* Rounded corners for images */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
+}
+

@@ -1,0 +1,72 @@
+/* FOOTER.css */
+.footer-container {
+  background-color: #f4f4f4;
+  padding: 20px;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  color: #333;
+  border-top: 3px solid #ff9800;
+}
+
+.footer-container p {
+  margin: 10px 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.footer-nav {
+  margin: 15px 0;
+}
+
+.footer-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.footer-nav ul li {
+  display: inline-block;
+}
+
+.footer-nav ul li a {
+  text-decoration: none;
+  color: #ff9800;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.footer-nav ul li a:hover {
+  color: #333;
+}
+
+.social-icons {
+  margin: 15px 0;
+}
+
+.social-icons a {
+  display: inline-block;
+  margin: 0 10px;
+  transition: transform 0.3s ease;
+}
+
+.social-icons a:hover {
+  transform: scale(1.1);
+}
+
+.social-icons img {
+  width: 24px;
+  height: 24px;
+}
+
+.footer-contact a {
+  color: #ff9800;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-contact a:hover {
+  color: #333;
+}
