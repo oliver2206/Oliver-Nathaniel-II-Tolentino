@@ -160,13 +160,20 @@
     let lastClickedName = ''; // Variable to hold the name of the last clicked card
 
     // Function to spell the word by letters with a delay and show the image
-    function speakCardName(cardName, card) {
+    function speakCardName(cardName, card, isLastClicked) {
       // Cancel any ongoing speech before starting new speech
       window.speechSynthesis.cancel();
 
-      // Speak the name of the card
+      // Create a new SpeechSynthesisUtterance to speak the word
       const speech = new SpeechSynthesisUtterance(cardName);
-      speech.lang = 'en-US';
+      speech.lang = 'fil-PH'; // Filipino language code for the Philippines
+
+      // If it's the last clicked card, increase the volume or pitch
+      if (isLastClicked) {
+        speech.volume = 1; // Loud volume (range from 0 to 1)
+        speech.pitch = 2; // High pitch
+      }
+
       speechSynthesis.speak(speech);
 
       // Show the image of the clicked card
@@ -184,7 +191,7 @@
           // Add each letter to the screen
           spelledOutDiv.innerHTML += cardName[i] + ' ';
           const letterSpeech = new SpeechSynthesisUtterance(cardName[i]);
-          letterSpeech.lang = 'en-US';
+          letterSpeech.lang = 'fil-PH'; // Filipino accent for each letter
           speechSynthesis.speak(letterSpeech);
         }, delay * i); // Delay for each letter
       }
@@ -198,7 +205,8 @@
     // Function to update the name of the last clicked card and speak it
     function updateAndSpeakCard(cardName, card) {
       lastClickedName = cardName;
-      speakCardName(cardName, card); // Speak the most recent card name and spell it
+      const isLastClicked = true; // This is the most recent clicked card
+      speakCardName(cardName, card, isLastClicked); // Speak the most recent card name with emphasis
     }
 
     // Add event listeners to each card
