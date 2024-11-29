@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-scale, initial-scale=1.0">
+  <title>Card Sound</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      color: #333;
+      margin-top: 20px;
+    }
+
+    .game-container {
+      margin: 40px auto;
+      max-width: 600px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      position: relative;
+    }
+
+    .card {
+      width: 100px;
+      height: 100px;
+      margin: 10px;
+      background-color: #ffdd57;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 2px solid #ffcc00;
+      border-radius: 8px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease, width 0.2s ease, height 0.2s ease;
+    }
+
+    .card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .card.clicked {
+      width: 400px;
+      height: 500px;
+      z-index: 10;
+    }
+
+    .card.hide {
+      display: none;
+    }
+
+    .controls {
+      margin-top: 30px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Card to Hear</h1>
+
+  <div class="game-container">
+    <!-- Cards with pictures -->
+    <div class="card" data-name="A for Apple ">
+      <img src="./PNGFILE/A FOR APPLE.jpg" alt="">
+    </div>
+    <div class="card" data-name=" B for Book">
+      <img src="./PNGFILE/B for Book.jpg" alt="">
+    </div>
+    <div class="card" data-name="C FOR CAT">
+      <img src="./PNGFILE/C FOR CAT.jpg" alt="">
+    </div>
+    <div class="card" data-name="D FOR DOG">
+      <img src="./PNGFILE/D FOR DOG.jpg" alt="">
+    </div>
+    <div class="card" data-name="E FOR EGG ">
+        <img src="./PNGFILE/E FOR EGG.jpg" alt="">
+      </div>
+      <div class="card" data-name=" F for FISH">
+        <img src="./PNGFILE/F FOR FISH.jpg" alt="">
+      </div>
+      <div class="card" data-name="G FOR GRAPES">
+        <img src="./PNGFILE/G FOR GRAPES.avif" alt="">
+      </div>
+      <div class="card" data-name=" H FOR HEN ">
+        <img src="./PNGFILE/H FOR HEN.avif" alt="">
+      </div>
+      <div class="card" data-name=" I FOR ICE CREAM">
+        <img src="./PNGFILE/./I FOR ICE CREAM.jpg" alt="">
+      </div>
+      <div class="card" data-name=" J FOR JAM">
+        <img src="./PNGFILE/./J FOR JAM.avif" alt="">
+      </div>
+      <div class="card" data-name=" K FOR KEY">
+        <img src="./PNGFILE/./K FOR KEY.jpg" alt="">
+      </div>
+      <div class="card" data-name=" L FOR LAMP">
+        <img src="./PNGFILE/./L FOR LAMP.avif" alt="">
+      </div>
+      <div class="card" data-name=" M FOR MILK ">
+        <img src="./PNGFILE/./M FOR MILK.avif" alt="">
+      </div>
+      <div class="card" data-name=" N FOR NET">
+        <img src="./PNGFILE/./N FOR NET.jpg" alt="">
+      </div>
+      <div class="card" data-name=" O FOR ORANGE">
+        <img src="./PNGFILE/./O FOR ORANGE.jpg" alt="">
+      </div>
+      <div class="card" data-name=" P FOR PENCIL">
+        <img src="./PNGFILE/./P FOR PENCIL.jpg.crdownload" alt="">
+      </div>
+      <div class="card" data-name=" Q FOR QUILT">
+        <img src="https://i.pinimg.com/736x/71/e7/60/71e76007ed0bc58d71f334589468a9d8.jpg" alt="">
+      </div>
+      <div class="card" data-name=" R FOR RABBIT ">
+        <img src="./PNGFILE/./R FOR RABBIT.jpg" alt="">
+      </div>
+      <div class="card" data-name=" S FOR SUN">
+        <img src="./PNGFILE/S FOR SUN.avif" alt="">
+      </div>
+      <div class="card" data-name="T FOR T-SHIRT ">
+        <img src="./PNGFILE/./T FOR TSHIRT.jpg" alt="">
+      </div>
+      <div class="card" data-name=" U FOR UNBRELLA">
+        <img src="https://i.pinimg.com/736x/58/93/28/58932835cc52d0530570f977c9081121.jpg" alt="">
+      </div>
+      <div class="card" data-name=" V FOR VASE">
+        <img src="./PNGFILE/V FOR VASE.avif" alt="">
+      </div>
+      <div class="card" data-name=" W FOR WHALE">
+        <img src="https://i.pinimg.com/736x/ac/f7/1b/acf71baa5749342c7342c81fe46f2193.jpg" alt="">
+      </div>
+      <div class="card" data-name=" X FOR X-RAY">
+        <img src="./PNGFILE/X FOR XRAY.jpg" alt="">
+      </div>
+      <div class="card" data-name=" Y FOR YOGURT ">
+        <img src="./PNGFILE/Y FOR YOGURT.avif" alt="">
+      </div>
+      <div class="card" data-name=" Z FOR ZIP">
+        <img src="https://i.pinimg.com/736x/c9/38/57/c938573f3f99fee4f16801882b899047.jpg" alt="">
+      </div>
+      
+    <!-- Add more cards as needed -->
+  </div>
+
+  <script>
+    // Initialize game elements
+    const cards = document.querySelectorAll('.card');
+
+    // Function to spell the card's name with a delay
+    function speakCardName(cardName) {
+      // Cancel any ongoing speech
+      window.speechSynthesis.cancel();
+
+      // Speak the name
+      const speech = new SpeechSynthesisUtterance(cardName);
+      speech.lang = 'en-US';
+
+      // When speech ends, restore the game
+      speech.onend = function () {
+        resetGame();
+      };
+
+      speechSynthesis.speak(speech);
+    }
+
+    // Reset the game (restore all cards)
+    function resetGame() {
+      cards.forEach(c => {
+        c.classList.remove('clicked', 'hide');
+      });
+    }
+
+    // Add event listeners to each card
+    cards.forEach(card => {
+      card.addEventListener('click', function () {
+        const cardName = card.getAttribute('data-name');
+        speakCardName(cardName);
+
+        // If the card is already clicked (enlarged), reset it
+        if (card.classList.contains('clicked')) {
+          resetGame();
+        } else {
+          // Enlarge the clicked card and hide others
+          cards.forEach(c => {
+            if (c === card) {
+              c.classList.add('clicked');
+            } else {
+              c.classList.add('hide');
+            }
+          });
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
