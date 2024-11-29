@@ -134,14 +134,6 @@
       font-weight: bold;
       color: #333;
     }
-
-    /* Display countdown timer */
-    .timer {
-      font-size: 20px;
-      color: #333;
-      font-weight: bold;
-    }
-
   </style>
 </head>
 <body>
@@ -151,14 +143,12 @@
   <!-- Display the current category -->
   <div class="current-category" id="currentCategory">Current Category: None</div>
 
-  <!-- Display timer for review period -->
-  <div id="reviewTimer" class="timer"></div>
-
   <div class="game-container">
     <div id="keyboard" class="keyboard"></div>
     <div class="controls">
       <p><strong>Formed Word:</strong> <span id="formedWord"></span></p>
       <button id="submitWord" disabled>Submit Word</button>
+      <button id="eraseLastLetter" disabled>Erase Last Letter</button> <!-- New erase button -->
       <p class="scoreboard"><strong>Score:</strong> <span id="score">0</span></p>
       <p id="message" class="message"></p>
     </div>
@@ -184,14 +174,13 @@
     const validWordsList = document.getElementById('validWordsList');
     const invalidWordsList = document.getElementById('invalidWordsList');
     const submitWordButton = document.getElementById('submitWord');
+    const eraseLastLetterButton = document.getElementById('eraseLastLetter'); // Erase button
     const currentCategoryElement = document.getElementById('currentCategory');
-    const reviewTimerElement = document.getElementById('reviewTimer');
 
     let selectedLetters = [];
     let score = 0;
     let currentCategory = null;
-    let reviewTimer = 60; // 1 minute review time
-    let timerInterval;
+    let validWordCount = 0;  // Counter for valid words
 
     // Word categories
     const wordCategories = {
@@ -213,120 +202,92 @@
       Weather: ['SUNNY', 'RAINY', 'CLOUDY', 'STORMY', 'SNOWY', 'WINDY', 'FOGGY', 'HURRICANE'],
       Tools: ['HAMMER', 'SCREWDRIVER', 'WRENCH', 'PLIERS', 'DRILL', 'SAW', 'TAPE MEASURE', 'LEVEL'],
       Plants: ['ROSE', 'TULIP', 'LILY', 'SUNFLOWER', 'DAISY', 'OAK', 'MAPLE', 'PINE'],
-      HistoricalEvents: ['WORLD WAR I', 'WORLD WAR II', 'THE AMERICAN REVOLUTION', 'THE FRENCH REVOLUTION', 'THE CIVIL WAR', 'THE RISE OF ROME', 'THE FALL OF THE BERLIN WALL', 'THE MOON LANDING'],
-      Books: ['HARRY POTTER', 'LORD OF THE RINGS', 'TO KILL A MOCKINGBIRD', 'THE GREAT GATSBY', 'MOBY DICK', 'PRIDE AND PREJUDICE', 'ANIMAL FARM', '1984']
+      Furniture: ['SOFA', 'CHAIR', 'BED', 'TABLE', 'WARDROBE', 'DESK', 'BOOKSHELF', 'CABINET'],
+      Toys: ['TEDDY BEAR', 'DOLL', 'LEGO', 'PUZZLE', 'YOYO', 'KITE', 'TRAIN SET', 'BICYCLE']
     };
 
-    // Combine all valid words
-    const validWords = Object.values(wordCategories).flat();
-
-    // Create the keyboard layout
-    function createKeyboard() {
-      const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-      alphabet.forEach(letter => {
-        const key = document.createElement('div');
-        key.classList.add('key');
-        key.textContent = letter;
-        key.dataset.letter = letter;
-        key.addEventListener('click', () => selectLetter(key));
-        keyboard.appendChild(key);
-      });
-    }
-
-    // Select a letter
-    function selectLetter(key) {
-      selectedLetters.push(key.dataset.letter);
-      formedWordElement.textContent = selectedLetters.join('');
-    }
-
-    // Submit the formed word
-    function submitWord() {
-      if (selectedLetters.length === 0) return;
-
-      const word = selectedLetters.join('');
-      const wordType = getWordType(word);
-
-      if (validWords.includes(word)) {
-        score += calculateScore(word);
-        scoreElement.textContent = score;
-        messageElement.textContent = `Valid word! (${wordType})`;
-        messageElement.style.color = 'green';
-        addWordToList(validWordsList, word, wordType);
-      } else {
-        messageElement.textContent = 'Invalid word!';
-        messageElement.style.color = 'red';
-        addWordToList(invalidWordsList, word);
-      }
-
-      resetGame();
-    }
-
-    // Determine the type of the word
-    function getWordType(word) {
-      for (const [category, words] of Object.entries(wordCategories)) {
-        if (words.includes(word)) return category;
-      }
-      return 'Unknown';
-    }
-
-    // Add a word to a list
-    function addWordToList(list, word, type = '') {
-      const listItem = document.createElement('li');
-      listItem.innerHTML = `${word} <span class="word-type">${type ? `(${type})` : ''}</span>`;
-      list.appendChild(listItem);
-    }
-
-    // Reset the game state
-    function resetGame() {
-      selectedLetters = [];
-      formedWordElement.textContent = '';
-    }
-
-    // Calculate score based on word length
-    function calculateScore(word) {
-      return word.length *
-       10; // Each letter is worth 10 points
-    }
-
-    // Activate a random category and start review period
-    function activateRandomCategory() {
+    // Function to initialize the game
+    function startGame() {
+      // Choose a random category
       const categories = Object.keys(wordCategories);
       currentCategory = categories[Math.floor(Math.random() * categories.length)];
       currentCategoryElement.textContent = `Current Category: ${currentCategory}`;
-      
-      // Show example words for review
-      const exampleWords = wordCategories[currentCategory].join(', ');
-      messageElement.textContent = `Words to form: ${exampleWords}`;
 
-      // Start review timer
-      startReviewTimer();
+      // Enable submit button initially
+      submitWordButton.disabled = false;
+
+      // Populate the keyboard with letters
+      const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      for (let i = 0; i < alphabet.length; i++) {
+        const key = document.createElement('div');
+        key.classList.add('key');
+        key.textContent = alphabet[i];
+        key.onclick = function() {
+          addLetterToWord(alphabet[i]);
+        };
+        keyboard.appendChild(key);
+      }
     }
 
-    // Start review countdown timer
-    function startReviewTimer() {
-      timerInterval = setInterval(() => {
-        reviewTimer--;
-        reviewTimerElement.textContent = `Review Time: ${reviewTimer}s`;
-
-        if (reviewTimer <= 0) {
-          clearInterval(timerInterval);
-          messageElement.textContent = 'Time to start!';
-          submitWordButton.disabled = false; // Enable button after review
-        }
-      }, 1000);
+    // Add the clicked letter to the formed word
+    function addLetterToWord(letter) {
+      selectedLetters.push(letter);
+      formedWordElement.textContent = selectedLetters.join('');
+      submitWordButton.disabled = false;
+      eraseLastLetterButton.disabled = false; // Enable erase button
     }
 
-    // Initialize the game
-    function initGame() {
-      createKeyboard();
-      activateRandomCategory();
+    // Erase the last letter from the formed word
+    eraseLastLetterButton.onclick = function() {
+      selectedLetters.pop();
+      formedWordElement.textContent = selectedLetters.join('');
+      if (selectedLetters.length === 0) {
+        eraseLastLetterButton.disabled = true; // Disable erase button if no letters left
+      }
+    };
+
+    // Submit the formed word
+    submitWordButton.onclick = function() {
+      const formedWord = formedWordElement.textContent.toUpperCase();
+      if (isValidWord(formedWord)) {
+        validWordCount++;
+        score += formedWord.length;
+        validWordsList.innerHTML += `<li>${formedWord}</li>`;
+      } else {
+        invalidWordsList.innerHTML += `<li>${formedWord}</li>`;
+      }
+      resetFormedWord();
+      updateScore();
+      displayMessage();
+    };
+
+    // Check if the formed word is valid
+    function isValidWord(word) {
+      const categoryWords = wordCategories[currentCategory];
+      return categoryWords.includes(word);
     }
 
-    // Add event listener to submit button
-    submitWordButton.addEventListener('click', submitWord);
+    // Reset the formed word
+    function resetFormedWord() {
+      selectedLetters = [];
+      formedWordElement.textContent = '';
+      submitWordButton.disabled = true;
+      eraseLastLetterButton.disabled = true; // Disable erase button
+    }
+
+    // Update the score
+    function updateScore() {
+      scoreElement.textContent = score;
+    }
+
+    // Display a message based on the game status
+    function displayMessage() {
+      messageElement.textContent = `You've formed ${validWordCount} valid words!`;
+    }
 
     // Start the game
-    initGame();
+    startGame();
   </script>
 </body>
 </html>
+
