@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Card Sound and Spelling</title>
+  <meta name="viewport" content="width=device-scale, initial-scale=1.0">
+  <title>Card Sound</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -20,10 +20,11 @@
 
     .game-container {
       margin: 40px auto;
-      max-width: 500px;
+      max-width: 600px;
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
+      position: relative;
     }
 
     .card {
@@ -34,19 +35,38 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 24px;
-      font-weight: bold;
-      color: #333;
       border: 2px solid #ffcc00;
       border-radius: 8px;
       cursor: pointer;
-      transition: transform 0.2s ease;
+      transition: transform 0.2s ease, width 0.2s ease, height 0.2s ease;
       position: relative;
+      overflow: hidden;
+    }
+
+    .card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.2s ease;
     }
 
     .card:hover {
       transform: scale(1.1);
-      background-color: #ffcc00;
+    }
+
+    .card img:hover {
+      transform: scale(1.2);
+    }
+
+    /* Enlarge the clicked card and hide others */
+    .card.clicked {
+      width: 250px;
+      height: 250px;
+      z-index: 10;
+    }
+
+    .card.hide {
+      display: none;
     }
 
     .controls {
@@ -57,163 +77,157 @@
     .message {
       font-size: 16px;
       font-weight: bold;
-      color: #d9534f;
+      color: #cd0802;
       margin-top: 20px;
-    }
-
-    .card img {
-      width: 80px;
-      height: 80px;
-      object-fit: cover;
-      display: none; /* Hide the image initially */
-    }
-
-    .card.show-image img {
-      display: block; /* Show image when the card is clicked */
-    }
-
-    .spelled-out {
-      font-size: 30px;
-      font-weight: bold;
-      margin-top: 20px;
-      color: #333;
     }
   </style>
 </head>
 <body>
 
-  <h1>Card to Hear and Spell</h1>
+  <h1>Card to Hear</h1>
 
   <div class="game-container">
+    <!-- Added fruits from A to Z -->
     <div class="card" data-name="Apple">
-      Apple
-      <img src="./PNGFILE/APPLE.png" alt="Apple">
+      <img src="./PNGFILE/APPLE.jpg" alt="Apple">
+     
     </div>
     <div class="card" data-name="Banana">
-      Banana
-      <img src="images/banana.jpg" alt="Banana">
+      <img src="./PNGFILE/BANANA'.jpg" alt="Banana">
     </div>
     <div class="card" data-name="Cherry">
-      Cherry
-      <img src="images/cherry.jpg" alt="Cherry">
+      <img src="./PNGFILE/CHERRY.jpg" alt="Cherry">
+    </div>
+    <div class="card" data-name="Date">
+      <img src="./PNGFILE/DRAGON FRUIT.jpg" alt="Dragon fruit">
+    </div>
+    <div class="card" data-name="Elderberry">
+      <img src="./PNGFILE/ELDERLY.jpg" alt="Elderberry">
+    </div>
+    <div class="card" data-name="Fig">
+      <img src="./PNGFILE/FIG.jpg" alt="Fig">
     </div>
     <div class="card" data-name="Grape">
-      Grape
-      <img src="images/grape.jpg" alt="Grape">
+      <img src="./PNGFILE/GRAPE.jpg" alt="Grape">
     </div>
-    <div class="card" data-name="Lemon">
-      Lemon
-      <img src="images/lemon.jpg" alt="Lemon">
+    <div class="card" data-name="Honeydew">
+      <img src="./PNGFILE/HONEYDREW.jpg" alt="Honeydew">
     </div>
-    <div class="card" data-name="Peach">
-      Peach
-      <img src="images/peach.jpg" alt="Peach">
+    <div class="card" data-name="Indian Fig">
+      <img src="./PNGFILE/INDIAN FIG.jpg" alt="Indian Fig">
     </div>
-    <div class="card" data-name="Pear">
-      Pear
-      <img src="images/pear.jpg" alt="Pear">
-    </div>
-    <div class="card" data-name="Plum">
-      Plum
-      <img src="images/plum.jpg" alt="Plum">
-    </div>
-    <div class="card" data-name="Pineapple">
-      Pineapple
-      <img src="images/pineapple.jpg" alt="Pineapple">
-    </div>
-    <div class="card" data-name="Strawberry">
-      Strawberry
-      <img src="images/strawberry.jpg" alt="Strawberry">
-    </div>
-    <div class="card" data-name="Watermelon">
-      Watermelon
-      <img src="images/watermelon.jpg" alt="Watermelon">
-    </div>
-    <div class="card" data-name="Mango">
-      Mango
-      <img src="images/mango.jpg" alt="Mango">
-    </div>
-    <div class="card" data-name="Blueberry">
-      Blueberry
-      <img src="images/blueberry.jpg" alt="Blueberry">
-    </div>
-    <div class="card" data-name="Raspberry">
-      Raspberry
-      <img src="images/raspberry.jpg" alt="Raspberry">
+    <div class="card" data-name="Jackfruit">
+      <img src="./PNGFILE/JACKFRUIT.jpg" alt="Jackfruit">
     </div>
     <div class="card" data-name="Kiwi">
-      Kiwi
-      <img src="images/kiwi.jpg" alt="Kiwi">
+      <img src="./PNGFILE/KIWI.jpg" alt="Kiwi">
+    </div>
+    <div class="card" data-name="Lemon">
+      <img src="./PNGFILE/LEMON.jpg" alt="Lemon">
+    </div>
+    <div class="card" data-name="Mango">
+      <img src="./PNGFILE/MANGO.jpg" alt="Mango">
+    </div>
+    <div class="card" data-name="Nectarine">
+      <img src="./PNGFILE/NECTARINE.jpg" alt="Nectarine">
     </div>
     <div class="card" data-name="Orange">
-      Orange
-      <img src="images/orange.jpg" alt="Orange">
+      <img src="./PNGFILE/ORNAGE.jpg" alt="Orange">
+    </div>
+    <div class="card" data-name="Papaya">
+      <img src="./PNGFILE/PAPAYA.jpg" alt="Papaya">
+    </div>
+    <div class="card" data-name="Quince">
+      <img src="./PNGFILE/QUINCE.jpg" alt="Quince">
+    </div>
+    <div class="card" data-name="Raspberry">
+      <img src="./PNGFILE/RASPBERRY.jpg.crdownload" alt="Raspberry">
+    </div>
+    <div class="card" data-name="Strawberry">
+      <img src="./PNGFILE/STRAWBERRY.jpg.crdownload" alt="Strawberry">
+    </div>
+    <div class="card" data-name="TAMARIND">
+      <img src="" alt="Tangerine">
+    </div>
+    <div class="card" data-name="Uva">
+      <img src="images/uva.jpg" alt="Uva">
+    </div>
+    <div class="card" data-name="Vinegar Fruit">
+      <img src="images/vinegarfruit.jpg" alt="Vinegar Fruit">
+    </div>
+    <div class="card" data-name="Watermelon">
+      <img src="images/watermelon.jpg" alt="Watermelon">
+    </div>
+    <div class="card" data-name="Xigua">
+      <img src="images/xigua.jpg" alt="Xigua">
+    </div>
+    <div class="card" data-name="Yellow Passion Fruit">
+      <img src="images/yellowpassionfruit.jpg" alt="Yellow Passion Fruit">
+    </div>
+    <div class="card" data-name="Zucchini">
+      <img src="images/zucchini.jpg" alt="Zucchini">
     </div>
   </div>
-
-  <div class="spelled-out" id="spelled-out"></div>
 
   <script>
     // Initialize game elements
     const cards = document.querySelectorAll('.card');
-    const spelledOutDiv = document.getElementById('spelled-out');
-    let lastClickedName = ''; // Variable to hold the name of the last clicked card
 
-    // Function to spell the word by letters with a delay and show the image
-    function speakCardName(cardName, card, isLastClicked) {
-      // Cancel any ongoing speech before starting new speech
+    // Function to spell the word by letters with a delay
+    function speakCardName(cardName) {
+      // Cancel any ongoing speech
       window.speechSynthesis.cancel();
 
-      // Create a new SpeechSynthesisUtterance to speak the word
+      // Speak the name of the card
       const speech = new SpeechSynthesisUtterance(cardName);
-      speech.lang = 'fil-PH'; // Filipino language code for the Philippines
+      speech.lang = 'en-US';
 
-      // If it's the last clicked card, increase the volume or pitch
-      if (isLastClicked) {
-        speech.volume = 1; // Loud volume (range from 0 to 1)
-        speech.pitch = 2; // High pitch
-      }
+      // When speech ends, restore the game
+      speech.onend = function() {
+        resetGame();
+      };
 
       speechSynthesis.speak(speech);
 
-      // Show the image of the clicked card
-      card.classList.add('show-image');
-
-      // Reset the displayed spelled-out word on screen
-      spelledOutDiv.innerHTML = '';
-
-      // Delay between each letter
+      // Delay between each letter for spelling
       let delay = 500;
 
       // Spell the word letter by letter
       for (let i = 0; i < cardName.length; i++) {
         setTimeout(() => {
-          // Add each letter to the screen
-          spelledOutDiv.innerHTML += cardName[i] + ' ';
           const letterSpeech = new SpeechSynthesisUtterance(cardName[i]);
-          letterSpeech.lang = 'fil-PH'; // Filipino accent for each letter
+          letterSpeech.lang = 'en-US';
           speechSynthesis.speak(letterSpeech);
         }, delay * i); // Delay for each letter
       }
-
-      // Remove the image after 3 seconds
-      setTimeout(() => {
-        card.classList.remove('show-image');
-      }, 3000);
     }
 
-    // Function to update the name of the last clicked card and speak it
-    function updateAndSpeakCard(cardName, card) {
-      lastClickedName = cardName;
-      const isLastClicked = true; // This is the most recent clicked card
-      speakCardName(cardName, card, isLastClicked); // Speak the most recent card name with emphasis
+    // Reset the game (restore all cards)
+    function resetGame() {
+      cards.forEach(c => {
+        c.classList.remove('clicked', 'hide');
+      });
     }
 
     // Add event listeners to each card
     cards.forEach(card => {
       card.addEventListener('click', function() {
         const cardName = card.getAttribute('data-name');
-        updateAndSpeakCard(cardName, card); // Update the last clicked name and speak it
+        speakCardName(cardName);
+
+        // If the card is already clicked (enlarged), reset it
+        if (card.classList.contains('clicked')) {
+          resetGame();
+        } else {
+          // Enlarge the clicked card and hide others
+          cards.forEach(c => {
+            if (c === card) {
+              c.classList.add('clicked');
+            } else {
+              c.classList.add('hide');
+            }
+          });
+        }
       });
     });
   </script>
