@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>"A Symphony of Shadows"</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    h1 {
+      color: #000000;
+      margin-top: 20px;
+      font-size: 36px;
+    }
+
+    .story-container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #00000000;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      max-height: 400px; /* Limit the height */
+      overflow-y: auto; /* Enable vertical scrolling */
+    }
+
+    .story-text {
+      font-size: 20px;
+      color: #333;
+      line-height: 1.6;
+      text-align: left;
+      margin-bottom: 20px;
+    }
+
+    .story-button {
+      padding: 15px 25px;
+      background-color: #000000;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      margin-top: 20px;
+    }
+
+    .story-button:hover {
+      background-color: #000000;
+    }
+
+    .story-background {
+      background-image: url('./PNGFIL');
+      background-size: cover;
+      background-position: center;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: -1;
+      opacity: 0.4;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="story-background"></div> <!-- Background image of the story -->
+
+  <h1>"A Symphony of Shadows"</h1>
+
+  <div class="story-container">
+    <div class="story-text" id="story-text">
+      Click the button to hear the story!
+    </div>
+    
+    <button class="story-button" id="speakButton">Start the Story</button>
+  </div>
+
+  <script>
+    // Get elements from the DOM
+    const speakButton = document.getElementById('speakButton');
+    const storyTextDiv = document.getElementById('story-text');
+  
+    // Story content
+    const storyParts = [
+      "In a world where light is the rarest of gifts, shadows rule the land. Every person is born with a unique shadow—a dark companion that follows them, amplifying their emotions and actions, sometimes even shaping their fate. But there is one person who dares to live without one.",
+      "Part I: The Silent Prelude",
+      "Lira, a young woman of striking beauty and haunting grace, was born into the City of Fading Lights, where sunlight never touches the earth. The sky above is a constant tapestry of swirling dark clouds, and the streets are lit by lanterns powered by faintly glowing crystals. People live in perpetual twilight, and their lives are shaped by the presence of their shadows—creatures that carry their deepest desires, fears, and memories.",
+      "Lira, however, has no shadow. She has lived her entire life in the quiet isolation of being an outcast, a ghost in a world of the living. She has always felt like something is missing—like a part of her was stolen before she was even born. Though she doesn't understand it, she knows there is something unusual about her existence. Her lack of shadow makes her invisible, unnoticed by the world around her.",
+      "As she wanders the city streets, Lira catches whispers in the wind, hints of a forgotten legend. It speaks of a 'Symphony of Shadows'—an ancient melody capable of commanding the shadows, of bending them to one’s will. But the melody has been lost, its notes scattered and hidden across the land, waiting for the right person to piece them together.",
+      "Part II: The Dark Crescendo",
+      "Lira’s journey begins when she encounters a mysterious figure known only as the Maestro. The Maestro, a former conductor of the Shadow Orchestra, is a man who once commanded the shadows with a single flick of his hand, but now, he is a shadow of his former self, hunted by the very creatures he once controlled. He tells Lira that the 'Symphony of Shadows' is not just a myth—it’s real, and it has the power to free the world from the tyranny of the shadows. But there’s a price to pay. The melody can only be played by one who has no shadow of their own, someone like Lira.",
+      "Reluctantly, Lira agrees to join the Maestro, setting off on a journey to collect the missing notes of the symphony. Along the way, she meets other shadowless individuals, each one burdened by their own loss, their own story. Together, they face the dark forces that rule the land—powerful rulers whose shadows are their most prized possessions, and who will stop at nothing to prevent the symphony from being played.",
+      "Part III: The Final Movement",
+      "As the group assembles the notes, they come to realize that the 'Symphony of Shadows' is not just a piece of music, but an ancient magic that binds the world together. The shadows are not merely companions, but the embodiment of the world's memories and emotions. They are the souls of those who came before, and they hunger for power.",
+      "In the final confrontation, Lira and the Maestro find themselves at the heart of a crumbling city, where the last note of the symphony is said to be hidden. As Lira plays the melody, she feels the shadows begin to stir, waking from their slumber and responding to the music’s call. But in that moment, the Maestro reveals his true intention: to use the symphony to regain his lost power and control over the shadows once again.",
+      "In a twist of fate, Lira learns that her lack of shadow was not a curse, but a blessing. She was chosen not to wield the symphony’s power, but to destroy it. Her role is not to control the shadows, but to set them free. With one final, heartbreaking note, Lira shatters the symphony, releasing the shadows back into the world.",
+      "The land is bathed in light for the first time in centuries. The shadows, no longer enslaved by the symphony, dissolve into the wind, leaving behind only the faintest echoes of their once-dominant presence.",
+      "Epilogue: The Final Note",
+      "Lira stands alone, the world around her now filled with light. The Maestro, defeated, disappears into the shadows he can no longer command. But Lira is no longer alone. Though she has no shadow, she has found something more precious—freedom. The melody of the symphony fades into memory, and the world begins anew, free from the grasp of the shadows that once ruled it.",
+      "In the end, Lira realizes that the true symphony is not one played on an instrument, but one composed by the hearts of those who dare to live without fear, without the weight of the past, and without the darkness that once controlled them. The music is not in the shadows, but in the light they leave behind.",
+      "The End."
+    ];
+  
+    // Function to speak the story
+    function speakStory() {
+      const story = storyParts.join(" ");
+      const speech = new SpeechSynthesisUtterance(story);
+      speech.lang = 'en-US'; // Set language
+      speech.rate = 0.8; // Adjust the speaking rate (1.0 is normal; lower is slower)
+      window.speechSynthesis.speak(speech);
+  
+      // Display the story text on the screen as it is being spoken
+      storyTextDiv.innerHTML = storyParts.join("<br><br>");
+    }
+  
+    // Event listener for the button
+    speakButton.addEventListener('click', function () {
+      speakStory();
+      speakButton.disabled = true;
+      speakButton.innerHTML = "Story is Playing...";
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>"Lira and the Magic Shadows"</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    h1 {
+      color: #000000;
+      margin-top: 20px;
+      font-size: 36px;
+    }
+
+    .story-container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #00000000;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      max-height: 400px; /* Limit the height */
+      overflow-y: auto; /* Enable vertical scrolling */
+    }
+
+    .story-text {
+      font-size: 20px;
+      color: #333;
+      line-height: 1.6;
+      text-align: left;
+      margin-bottom: 20px;
+    }
+
+    .story-button {
+      padding: 15px 25px;
+      background-color: #000000;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      margin-top: 20px;
+    }
+
+    .story-button:hover {
+      background-color: #000000;
+    }
+
+    .story-background {
+      background-image: url('./PNGFILE/lira.webp');
+      background-size: cover;
+      background-position: center;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: -1;
+      opacity: 0.4;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="story-background"></div> <!-- Background image of the story -->
+
+  <h1>"Lira and the Magic Shadows"</h1>
+
+  <div class="story-container">
+    <div class="story-text" id="story-text">
+      Click the button to hear the story!
+    </div>
+    
+    <button class="story-button" id="speakButton">Start the Story</button>
+  </div>
+
+  <script>
+    // Get elements from the DOM
+    const speakButton = document.getElementById('speakButton');
+    const storyTextDiv = document.getElementById('story-text');
+  
+    // Story content for "Lira and the Magic Shadows"
+    const storyParts = [
+      "In a magical land where the sun only comes out sometimes, everyone has a special shadow. The shadow isn’t just a dark shape; it’s like a best friend that follows them around. These shadows can help people, make them laugh, and sometimes even keep them safe. But there was one little girl who had no shadow at all.",
+      "Her name was Lira, and she lived in a beautiful city called the City of Twinkling Lights. In the city, the sun would hide behind big fluffy clouds, so the streets were always a little dark, like it was nighttime. But everyone’s shadows shined brightly, and they would dance and play.",
+      "Lira was different. She didn’t have a shadow. Every day, she would look at her friends and watch their shadows skip and jump, but she felt lonely because she didn’t have one of her own.",
+      "One day, Lira heard a secret from the wind. The wind whispered to her about a magical Symphony of Shadows. This special song could bring shadows to life and make them even more magical. But there was a problem: only people who didn’t have shadows could find the music and play it.",
+      "Lira was curious. 'Maybe I can find the song and make the world a little brighter!' she thought. So, Lira went on an adventure to find the Symphony of Shadows.",
+      "Along the way, Lira met a kind old man called the Maestro. He was once the leader of the Shadow Orchestra, a group of magical musicians who could play the symphony. But the Maestro had lost his own shadow, and without it, the music couldn’t be played.",
+      "The Maestro told Lira, 'Only someone like you, without a shadow, can help us play the symphony. Let’s find the music and bring joy to the world!'",
+      "Lira and the Maestro traveled through dark forests, over snowy mountains, and across rivers that sparkled with light. Along the way, they found notes of the symphony hidden in the most surprising places—under giant mushrooms, inside glowing caves, and in the branches of tall, twisting trees.",
+      "Finally, after a long journey, Lira and the Maestro found the last note of the symphony! With excitement, Lira played the song, and the shadows in the city began to dance and twirl, just like they were alive!",
+      "But something special happened. Lira’s heart was so full of joy that, as she played the music, her own shadow appeared! It was small at first, but it grew bigger and bigger until it was a beautiful, dancing shadow, just like her friends' shadows.",
+      "Lira smiled. 'I don't need to worry about being different anymore. My shadow and I can play together, and we can all share the magic of the symphony!'",
+      "The world became brighter, and the shadows—who had once been sad and quiet—became happy and full of life, just like Lira.",
+      "From that day on, Lira knew that everyone has their own special magic. Some people might have shadows, some might not—but we all shine in our own way.",
+      "And so, Lira’s adventure helped her find the most important thing of all: that no matter who we are, we are never truly alone.",
+      "The End."
+    ];
+  
+    // Function to speak the story
+    function speakStory() {
+      const story = storyParts.join(" ");
+      const speech = new SpeechSynthesisUtterance(story);
+      speech.lang = 'en-US'; // Set language
+      speech.rate = 0.8; // Adjust the speaking rate (1.0 is normal; lower is slower)
+      window.speechSynthesis.speak(speech);
+  
+      // Display the story text on the screen as it is being spoken
+      storyTextDiv.innerHTML = storyParts.join("<br><br>");
+    }
+  
+    // Event listener for the button
+    speakButton.addEventListener('click', function () {
+      speakStory();
+      speakButton.disabled = true;
+      speakButton.innerHTML = "Story is Playing...";
+    });
+  </script>
+</body>
+</html>
