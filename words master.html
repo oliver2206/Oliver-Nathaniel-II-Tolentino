@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Word Master Challenge</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      color: #333;
+      margin-top: 20px;
+    }
+
+    p {
+      color: #555;
+    }
+
+    .game-container {
+      margin: 20px auto;
+      max-width: 500px;
+    }
+
+    .keyboard {
+      display: grid;
+      grid-template-columns: repeat(10, 60px);
+      grid-gap: 10px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .key {
+      width: 60px;
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #ffdd57;
+      color: #333;
+      font-size: 24px;
+      font-weight: bold;
+      border: 2px solid #ffcc00;
+      border-radius: 8px;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.2s ease;
+    }
+
+    .key:active {
+      transform: scale(0.9);
+      background-color: #ffcc00;
+    }
+
+    .controls {
+      margin: 20px 0;
+    }
+
+    button {
+      background-color: #ff6347;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #ff4500;
+    }
+
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .scoreboard {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+
+    .message {
+      font-size: 16px;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+
+    .word-lists {
+      display: flex;
+      justify-content: space-between;
+      max-width: 500px;
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    .word-list {
+      width: 45%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+    }
+
+    .word-list h3 {
+      margin-bottom: 10px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      margin-bottom: 5px;
+    }
+
+    .word-type {
+      font-style: italic;
+      color: #777;
+    }
+
+    /* Display current category */
+    .current-category {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    /* Display countdown timer */
+    .timer {
+      font-size: 20px;
+      color: #333;
+      font-weight: bold;
+    }
+
+  </style>
+</head>
+<body>
+  <h1>Word Master</h1>
+  <p>Click the letters on the keyboard to form a word! Words earn points based on their length.</p>
+
+  <!-- Display the current category -->
+  <div class="current-category" id="currentCategory">Current Category: None</div>
+
+  <!-- Display timer for review period -->
+  <div id="reviewTimer" class="timer"></div>
+
+  <div class="game-container">
+    <div id="keyboard" class="keyboard"></div>
+    <div class="controls">
+      <p><strong>Formed Word:</strong> <span id="formedWord"></span></p>
+      <button id="submitWord" disabled>Submit Word</button>
+      <p class="scoreboard"><strong>Score:</strong> <span id="score">0</span></p>
+      <p id="message" class="message"></p>
+    </div>
+  </div>
+
+  <div class="word-lists">
+    <div class="word-list">
+      <h3>Valid Words</h3>
+      <ul id="validWordsList"></ul>
+    </div>
+    <div class="word-list">
+      <h3>Invalid Words</h3>
+      <ul id="invalidWordsList"></ul>
+    </div>
+  </div>
+
+  <script>
+    // Initialize DOM elements
+    const keyboard = document.getElementById('keyboard');
+    const formedWordElement = document.getElementById('formedWord');
+    const scoreElement = document.getElementById('score');
+    const messageElement = document.getElementById('message');
+    const validWordsList = document.getElementById('validWordsList');
+    const invalidWordsList = document.getElementById('invalidWordsList');
+    const submitWordButton = document.getElementById('submitWord');
+    const currentCategoryElement = document.getElementById('currentCategory');
+    const reviewTimerElement = document.getElementById('reviewTimer');
+
+    let selectedLetters = [];
+    let score = 0;
+    let currentCategory = null;
+    let reviewTimer = 60; // 1 minute review time
+    let timerInterval;
+
+    // Word categories
+    const wordCategories = {
+      Fruits: ['APPLE', 'BANANA', 'ORANGE', 'GRAPE', 'PEAR', 'PEACH', 'PLUM', 'LEMON'],
+      Animals: ['DOG', 'CAT', 'LION', 'TIGER', 'FOX', 'BEAR', 'EAGLE', 'WOLF'],
+      Objects: ['CHAIR', 'TABLE', 'LAMP', 'PHONE', 'CLOCK', 'PAPER', 'PEN', 'CUP'],
+      Countries: ['UNITED STATES', 'CANADA', 'BRAZIL', 'FRANCE', 'GERMANY', 'JAPAN', 'AUSTRALIA', 'MEXICO'],
+      Colors: ['RED', 'BLUE', 'GREEN', 'YELLOW', 'PURPLE', 'ORANGE', 'BLACK', 'WHITE'],
+      Sports: ['SOCCER', 'BASKETBALL', 'BASEBALL', 'TENNIS', 'CRICKET', 'HOCKEY', 'VOLLEYBALL', 'GOLF'],
+      Food: ['PIZZA', 'BURGER', 'SUSHI', 'PASTA', 'SALAD', 'SOUP', 'ICE CREAM', 'STEAK'],
+      Movies: ['TITANIC', 'INCEPTION', 'AVATAR', 'THE GODFATHER', 'JURASSIC PARK', 'STAR WARS', 'THE MATRIX', 'FROZEN'],
+      Instruments: ['GUITAR', 'PIANO', 'DRUMS', 'VIOLIN', 'FLUTE', 'TRUMPET', 'SAXOPHONE', 'CELLO'],
+      Technology: ['COMPUTER', 'SMARTPHONE', 'TABLET', 'LAPTOP', 'INTERNET', 'SOFTWARE', 'HARDWARE', 'PRINTER'],
+      Vehicles: ['CAR', 'TRUCK', 'MOTORCYCLE', 'BICYCLE', 'BUS', 'AIRPLANE', 'BOAT', 'TRAIN'],
+      Seasons: ['WINTER', 'SPRING', 'SUMMER', 'AUTUMN', 'FALL', 'RAINY SEASON', 'DRY SEASON', 'MONSOON'],
+      AnimalsExpanded: ['ELEPHANT', 'GIRAFFE', 'RHINO', 'KOALA', 'ZEBRA', 'MONKEY', 'COW', 'HORSE'],
+      Professions: ['DOCTOR', 'ENGINEER', 'TEACHER', 'NURSE', 'LAWYER', 'POLICE OFFICER', 'CHEF', 'FARMER'],
+      Landmarks: ['EIFFEL TOWER', 'GREAT WALL OF CHINA', 'STATUE OF LIBERTY', 'CHRIST THE REDEEMER', 'MACHU PICCHU', 'PYRAMIDS OF GIZA', 'TAJ MAHAL', 'COLOSSEUM'],
+      Weather: ['SUNNY', 'RAINY', 'CLOUDY', 'STORMY', 'SNOWY', 'WINDY', 'FOGGY', 'HURRICANE'],
+      Tools: ['HAMMER', 'SCREWDRIVER', 'WRENCH', 'PLIERS', 'DRILL', 'SAW', 'TAPE MEASURE', 'LEVEL'],
+      Plants: ['ROSE', 'TULIP', 'LILY', 'SUNFLOWER', 'DAISY', 'OAK', 'MAPLE', 'PINE'],
+      HistoricalEvents: ['WORLD WAR I', 'WORLD WAR II', 'THE AMERICAN REVOLUTION', 'THE FRENCH REVOLUTION', 'THE CIVIL WAR', 'THE RISE OF ROME', 'THE FALL OF THE BERLIN WALL', 'THE MOON LANDING'],
+      Books: ['HARRY POTTER', 'LORD OF THE RINGS', 'TO KILL A MOCKINGBIRD', 'THE GREAT GATSBY', 'MOBY DICK', 'PRIDE AND PREJUDICE', 'ANIMAL FARM', '1984']
+    };
+
+    // Combine all valid words
+    const validWords = Object.values(wordCategories).flat();
+
+    // Create the keyboard layout
+    function createKeyboard() {
+      const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+      alphabet.forEach(letter => {
+        const key = document.createElement('div');
+        key.classList.add('key');
+        key.textContent = letter;
+        key.dataset.letter = letter;
+        key.addEventListener('click', () => selectLetter(key));
+        keyboard.appendChild(key);
+      });
+    }
+
+    // Select a letter
+    function selectLetter(key) {
+      selectedLetters.push(key.dataset.letter);
+      formedWordElement.textContent = selectedLetters.join('');
+    }
+
+    // Submit the formed word
+    function submitWord() {
+      if (selectedLetters.length === 0) return;
+
+      const word = selectedLetters.join('');
+      const wordType = getWordType(word);
+
+      if (validWords.includes(word)) {
+        score += calculateScore(word);
+        scoreElement.textContent = score;
+        messageElement.textContent = `Valid word! (${wordType})`;
+        messageElement.style.color = 'green';
+        addWordToList(validWordsList, word, wordType);
+      } else {
+        messageElement.textContent = 'Invalid word!';
+        messageElement.style.color = 'red';
+        addWordToList(invalidWordsList, word);
+      }
+
+      resetGame();
+    }
+
+    // Determine the type of the word
+    function getWordType(word) {
+      for (const [category, words] of Object.entries(wordCategories)) {
+        if (words.includes(word)) return category;
+      }
+      return 'Unknown';
+    }
+
+    // Add a word to a list
+    function addWordToList(list, word, type = '') {
+      const listItem = document.createElement('li');
+      listItem.innerHTML = `${word} <span class="word-type">${type ? `(${type})` : ''}</span>`;
+      list.appendChild(listItem);
+    }
+
+    // Reset the game state
+    function resetGame() {
+      selectedLetters = [];
+      formedWordElement.textContent = '';
+    }
+
+    // Calculate score based on word length
+    function calculateScore(word) {
+      return word.length *
+       10; // Each letter is worth 10 points
+    }
+
+    // Activate a random category and start review period
+    function activateRandomCategory() {
+      const categories = Object.keys(wordCategories);
+      currentCategory = categories[Math.floor(Math.random() * categories.length)];
+      currentCategoryElement.textContent = `Current Category: ${currentCategory}`;
+      
+      // Show example words for review
+      const exampleWords = wordCategories[currentCategory].join(', ');
+      messageElement.textContent = `Words to form: ${exampleWords}`;
+
+      // Start review timer
+      startReviewTimer();
+    }
+
+    // Start review countdown timer
+    function startReviewTimer() {
+      timerInterval = setInterval(() => {
+        reviewTimer--;
+        reviewTimerElement.textContent = `Review Time: ${reviewTimer}s`;
+
+        if (reviewTimer <= 0) {
+          clearInterval(timerInterval);
+          messageElement.textContent = 'Time to start!';
+          submitWordButton.disabled = false; // Enable button after review
+        }
+      }, 1000);
+    }
+
+    // Initialize the game
+    function initGame() {
+      createKeyboard();
+      activateRandomCategory();
+    }
+
+    // Add event listener to submit button
+    submitWordButton.addEventListener('click', submitWord);
+
+    // Start the game
+    initGame();
+  </script>
+</body>
+</html>
