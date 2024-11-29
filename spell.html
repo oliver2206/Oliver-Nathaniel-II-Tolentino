@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Card Sound</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      color: #333;
+      margin-top: 20px;
+    }
+
+    .game-container {
+      margin: 40px auto;
+      max-width: 500px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .card {
+      width: 100px;
+      height: 100px;
+      margin: 10px;
+      background-color: #ffdd57;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      font-weight: bold;
+      color: #333;
+      border: 2px solid #ffcc00;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      position: relative;
+    }
+
+    .card:hover {
+      transform: scale(1.1);
+      background-color: #ffcc00;
+    }
+
+    .controls {
+      margin-top: 30px;
+      font-size: 18px;
+    }
+
+    .message {
+      font-size: 16px;
+      font-weight: bold;
+      color: #d9534f;
+      margin-top: 20px;
+    }
+
+    .card img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      display: none; /* Hide the image initially */
+    }
+
+    .card.show-image img {
+      display: block; /* Show image when the card is clicked */
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Card to Hear</h1>
+
+  <div class="game-container">
+    <div class="card" data-name="Apple">
+      Apple
+      <img src="./PNGFILE/APPLE.png" alt="Apple">
+    </div>
+    <div class="card" data-name="Banana">
+      Banana
+      <img src="images/banana.jpg" alt="Banana">
+    </div>
+    <div class="card" data-name="Cherry">
+      Cherry
+      <img src="images/cherry.jpg" alt="Cherry">
+    </div>
+    <div class="card" data-name="Grape">
+      Grape
+      <img src="images/grape.jpg" alt="Grape">
+    </div>
+    <div class="card" data-name="Lemon">
+      Lemon
+      <img src="images/lemon.jpg" alt="Lemon">
+    </div>
+    <div class="card" data-name="Peach">
+      Peach
+      <img src="images/peach.jpg" alt="Peach">
+    </div>
+    <div class="card" data-name="Pear">
+      Pear
+      <img src="images/pear.jpg" alt="Pear">
+    </div>
+    <div class="card" data-name="Plum">
+      Plum
+      <img src="images/plum.jpg" alt="Plum">
+    </div>
+    <div class="card" data-name="Pineapple">
+      Pineapple
+      <img src="images/pineapple.jpg" alt="Pineapple">
+    </div>
+    <div class="card" data-name="Strawberry">
+      Strawberry
+      <img src="images/strawberry.jpg" alt="Strawberry">
+    </div>
+    <div class="card" data-name="Watermelon">
+      Watermelon
+      <img src="images/watermelon.jpg" alt="Watermelon">
+    </div>
+    <div class="card" data-name="Mango">
+      Mango
+      <img src="images/mango.jpg" alt="Mango">
+    </div>
+    <div class="card" data-name="Blueberry">
+      Blueberry
+      <img src="images/blueberry.jpg" alt="Blueberry">
+    </div>
+    <div class="card" data-name="Raspberry">
+      Raspberry
+      <img src="images/raspberry.jpg" alt="Raspberry">
+    </div>
+    <div class="card" data-name="Kiwi">
+      Kiwi
+      <img src="images/kiwi.jpg" alt="Kiwi">
+    </div>
+    <div class="card" data-name="Orange">
+      Orange
+      <img src="images/orange.jpg" alt="Orange">
+    </div>
+  </div>
+
+  <script>
+    // Initialize game elements
+    const cards = document.querySelectorAll('.card');
+    let lastClickedName = ''; // Variable to hold the name of the last clicked card
+
+    // Function to spell the word by letters with a delay and show the image
+    function speakCardName(cardName, card) {
+      // Cancel any ongoing speech before starting new speech
+      window.speechSynthesis.cancel();
+
+      // Speak the name of the card
+      const speech = new SpeechSynthesisUtterance(cardName);
+      speech.lang = 'en-US';
+      speechSynthesis.speak(speech);
+
+      // Show the image of the clicked card
+      card.classList.add('show-image');
+
+      // Delay between each letter
+      let delay = 500;
+
+      // Spell the word letter by letter
+      for (let i = 0; i < cardName.length; i++) {
+        setTimeout(() => {
+          const letterSpeech = new SpeechSynthesisUtterance(cardName[i]);
+          letterSpeech.lang = 'en-US';
+          speechSynthesis.speak(letterSpeech);
+        }, delay * i); // Delay for each letter
+      }
+
+      // Remove the image after 3 seconds
+      setTimeout(() => {
+        card.classList.remove('show-image');
+      }, 3000);
+    }
+
+    // Function to update the name of the last clicked card and speak it
+    function updateAndSpeakCard(cardName) {
+      lastClickedName = cardName;
+      speakCardName(cardName); // Speak the most recent card name
+    }
+
+    // Add event listeners to each card
+    cards.forEach(card => {
+      card.addEventListener('click', function() {
+        const cardName = card.getAttribute('data-name');
+        updateAndSpeakCard(cardName); // Update the last clicked name and speak it
+      });
+    });
+  </script>
+
+</body>
+</html>
