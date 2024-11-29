@@ -1,293 +1,322 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Word Master Challenge</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background-color: #f4f4f9;
-      margin: 0;
-      padding: 0;
-    }
-
-    h1 {
-      color: #333;
-      margin-top: 20px;
-    }
-
-    p {
-      color: #555;
-    }
-
-    .game-container {
-      margin: 20px auto;
-      max-width: 500px;
-    }
-
-    .keyboard {
-      display: grid;
-      grid-template-columns: repeat(10, 60px);
-      grid-gap: 10px;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
-
-    .key {
-      width: 60px;
-      height: 60px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: #ffdd57;
-      color: #333;
-      font-size: 24px;
-      font-weight: bold;
-      border: 2px solid #ffcc00;
-      border-radius: 8px;
-      cursor: pointer;
-      user-select: none;
-      transition: transform 0.2s ease;
-    }
-
-    .key:active {
-      transform: scale(0.9);
-      background-color: #ffcc00;
-    }
-
-    .controls {
-      margin: 20px 0;
-    }
-
-    button {
-      background-color: #ff6347;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      font-size: 16px;
-      font-weight: bold;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #ff4500;
-    }
-
-    button:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-    }
-
-    .scoreboard {
-      font-size: 18px;
-      font-weight: bold;
-      margin: 10px 0;
-    }
-
-    .message {
-      font-size: 16px;
-      font-weight: bold;
-      margin: 10px 0;
-    }
-
-    .word-lists {
-      display: flex;
-      justify-content: space-between;
-      max-width: 500px;
-      margin: 0 auto;
-      text-align: left;
-    }
-
-    .word-list {
-      width: 45%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      background-color: #f9f9f9;
-    }
-
-    .word-list h3 {
-      margin-bottom: 10px;
-    }
-
-    ul {
-      list-style: none;
-      padding: 0;
-    }
-
-    li {
-      margin-bottom: 5px;
-    }
-
-    .word-type {
-      font-style: italic;
-      color: #777;
-    }
-
-    /* Display current category */
-    .current-category {
-      margin-top: 20px;
-      font-size: 18px;
-      font-weight: bold;
-      color: #333;
-    }
-  </style>
-</head>
-<body>
-  <h1>Word Master</h1>
-  <p>Click the letters on the keyboard to form a word! Words earn points based on their length.</p>
-
-  <!-- Display the current category -->
-  <div class="current-category" id="currentCategory">Current Category: None</div>
-
-  <div class="game-container">
-    <div id="keyboard" class="keyboard"></div>
-    <div class="controls">
-      <p><strong>Formed Word:</strong> <span id="formedWord"></span></p>
-      <button id="submitWord" disabled>Submit Word</button>
-      <button id="eraseLastLetter" disabled>Erase Last Letter</button> <!-- New erase button -->
-      <p class="scoreboard"><strong>Score:</strong> <span id="score">0</span></p>
-      <p id="message" class="message"></p>
-    </div>
-  </div>
-
-  <div class="word-lists">
-    <div class="word-list">
-      <h3>Valid Words</h3>
-      <ul id="validWordsList"></ul>
-    </div>
-    <div class="word-list">
-      <h3>Invalid Words</h3>
-      <ul id="invalidWordsList"></ul>
-    </div>
-  </div>
-
-  <script>
-    // Initialize DOM elements
-    const keyboard = document.getElementById('keyboard');
-    const formedWordElement = document.getElementById('formedWord');
-    const scoreElement = document.getElementById('score');
-    const messageElement = document.getElementById('message');
-    const validWordsList = document.getElementById('validWordsList');
-    const invalidWordsList = document.getElementById('invalidWordsList');
-    const submitWordButton = document.getElementById('submitWord');
-    const eraseLastLetterButton = document.getElementById('eraseLastLetter'); // Erase button
-    const currentCategoryElement = document.getElementById('currentCategory');
-
-    let selectedLetters = [];
-    let score = 0;
-    let currentCategory = null;
-    let validWordCount = 0;  // Counter for valid words
-
-    // Word categories
-    const wordCategories = {
-      Fruits: ['APPLE', 'BANANA', 'ORANGE', 'GRAPE', 'PEAR', 'PEACH', 'PLUM', 'LEMON'],
-      Animals: ['DOG', 'CAT', 'LION', 'TIGER', 'FOX', 'BEAR', 'EAGLE', 'WOLF'],
-      Objects: ['CHAIR', 'TABLE', 'LAMP', 'PHONE', 'CLOCK', 'PAPER', 'PEN', 'CUP'],
-      Countries: ['UNITED STATES', 'CANADA', 'BRAZIL', 'FRANCE', 'GERMANY', 'JAPAN', 'AUSTRALIA', 'MEXICO'],
-      Colors: ['RED', 'BLUE', 'GREEN', 'YELLOW', 'PURPLE', 'ORANGE', 'BLACK', 'WHITE'],
-      Sports: ['SOCCER', 'BASKETBALL', 'BASEBALL', 'TENNIS', 'CRICKET', 'HOCKEY', 'VOLLEYBALL', 'GOLF'],
-      Food: ['PIZZA', 'BURGER', 'SUSHI', 'PASTA', 'SALAD', 'SOUP', 'ICE CREAM', 'STEAK'],
-      Movies: ['TITANIC', 'INCEPTION', 'AVATAR', 'THE GODFATHER', 'JURASSIC PARK', 'STAR WARS', 'THE MATRIX', 'FROZEN'],
-      Instruments: ['GUITAR', 'PIANO', 'DRUMS', 'VIOLIN', 'FLUTE', 'TRUMPET', 'SAXOPHONE', 'CELLO'],
-      Technology: ['COMPUTER', 'SMARTPHONE', 'TABLET', 'LAPTOP', 'INTERNET', 'SOFTWARE', 'HARDWARE', 'PRINTER'],
-      Vehicles: ['CAR', 'TRUCK', 'MOTORCYCLE', 'BICYCLE', 'BUS', 'AIRPLANE', 'BOAT', 'TRAIN'],
-      Seasons: ['WINTER', 'SPRING', 'SUMMER', 'AUTUMN', 'FALL', 'RAINY SEASON', 'DRY SEASON', 'MONSOON'],
-      AnimalsExpanded: ['ELEPHANT', 'GIRAFFE', 'RHINO', 'KOALA', 'ZEBRA', 'MONKEY', 'COW', 'HORSE'],
-      Professions: ['DOCTOR', 'ENGINEER', 'TEACHER', 'NURSE', 'LAWYER', 'POLICE OFFICER', 'CHEF', 'FARMER'],
-      Landmarks: ['EIFFEL TOWER', 'GREAT WALL OF CHINA', 'STATUE OF LIBERTY', 'CHRIST THE REDEEMER', 'MACHU PICCHU', 'PYRAMIDS OF GIZA', 'TAJ MAHAL', 'COLOSSEUM'],
-      Weather: ['SUNNY', 'RAINY', 'CLOUDY', 'STORMY', 'SNOWY', 'WINDY', 'FOGGY', 'HURRICANE'],
-      Tools: ['HAMMER', 'SCREWDRIVER', 'WRENCH', 'PLIERS', 'DRILL', 'SAW', 'TAPE MEASURE', 'LEVEL'],
-      Plants: ['ROSE', 'TULIP', 'LILY', 'SUNFLOWER', 'DAISY', 'OAK', 'MAPLE', 'PINE'],
-      Furniture: ['SOFA', 'CHAIR', 'BED', 'TABLE', 'WARDROBE', 'DESK', 'BOOKSHELF', 'CABINET'],
-      Toys: ['TEDDY BEAR', 'DOLL', 'LEGO', 'PUZZLE', 'YOYO', 'KITE', 'TRAIN SET', 'BICYCLE']
-    };
-
-    // Function to initialize the game
-    function startGame() {
-      // Choose a random category
-      const categories = Object.keys(wordCategories);
-      currentCategory = categories[Math.floor(Math.random() * categories.length)];
-      currentCategoryElement.textContent = `Current Category: ${currentCategory}`;
-
-      // Enable submit button initially
-      submitWordButton.disabled = false;
-
-      // Populate the keyboard with letters
-      const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      for (let i = 0; i < alphabet.length; i++) {
-        const key = document.createElement('div');
-        key.classList.add('key');
-        key.textContent = alphabet[i];
-        key.onclick = function() {
-          addLetterToWord(alphabet[i]);
-        };
-        keyboard.appendChild(key);
-      }
-    }
-
-    // Add the clicked letter to the formed word
-    function addLetterToWord(letter) {
-      selectedLetters.push(letter);
-      formedWordElement.textContent = selectedLetters.join('');
-      submitWordButton.disabled = false;
-      eraseLastLetterButton.disabled = false; // Enable erase button
-    }
-
-    // Erase the last letter from the formed word
-    eraseLastLetterButton.onclick = function() {
-      selectedLetters.pop();
-      formedWordElement.textContent = selectedLetters.join('');
-      if (selectedLetters.length === 0) {
-        eraseLastLetterButton.disabled = true; // Disable erase button if no letters left
-      }
-    };
-
-    // Submit the formed word
-    submitWordButton.onclick = function() {
-      const formedWord = formedWordElement.textContent.toUpperCase();
-      if (isValidWord(formedWord)) {
-        validWordCount++;
-        score += formedWord.length;
-        validWordsList.innerHTML += `<li>${formedWord}</li>`;
-      } else {
-        invalidWordsList.innerHTML += `<li>${formedWord}</li>`;
-      }
-      resetFormedWord();
-      updateScore();
-      displayMessage();
-    };
-
-    // Check if the formed word is valid
-    function isValidWord(word) {
-      const categoryWords = wordCategories[currentCategory];
-      return categoryWords.includes(word);
-    }
-
-    // Reset the formed word
-    function resetFormedWord() {
-      selectedLetters = [];
-      formedWordElement.textContent = '';
-      submitWordButton.disabled = true;
-      eraseLastLetterButton.disabled = true; // Disable erase button
-    }
-
-    // Update the score
-    function updateScore() {
-      scoreElement.textContent = score;
-    }
-
-    // Display a message based on the game status
-    function displayMessage() {
-      messageElement.textContent = `You've formed ${validWordCount} valid words!`;
-    }
-
-    // Start the game
-    startGame();
-  </script>
-</body>
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+  <meta charset="UTF-8">  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+  <title>Word Master Challenge</title>  
+  <style>  
+   body {  
+    font-family: Arial, sans-serif;  
+    text-align: center;  
+    background-color: #f4f4f9;  
+    margin: 0;  
+    padding: 0;  
+   }  
+  
+   h1 {  
+    color: #333;  
+    margin-top: 20px;  
+   }  
+  
+   p {  
+    color: #555;  
+   }  
+  
+   .game-container {  
+    margin: 20px auto;  
+    max-width: 500px;  
+   }  
+  
+   .keyboard {  
+    display: grid;  
+    grid-template-columns: repeat(10, 60px);  
+    grid-gap: 10px;  
+    justify-content: center;  
+    margin-bottom: 20px;  
+   }  
+  
+   .key {  
+    width: 60px;  
+    height: 60px;  
+    display: flex;  
+    justify-content: center;  
+    align-items: center;  
+    background-color: #ffdd57;  
+    color: #333;  
+    font-size: 24px;  
+    font-weight: bold;  
+    border: 2px solid #ffcc00;  
+    border-radius: 8px;  
+    cursor: pointer;  
+    user-select: none;  
+    transition: transform 0.2s ease;  
+   }  
+  
+   .key:active {  
+    transform: scale(0.9);  
+    background-color: #ffcc00;  
+   }  
+  
+   .controls {  
+    margin: 20px 0;  
+   }  
+  
+   button {  
+    background-color: #ff6347;  
+    color: white;  
+    border: none;  
+    padding: 10px 20px;  
+    font-size: 16px;  
+    font-weight: bold;  
+    border-radius: 5px;  
+    cursor: pointer;  
+   }  
+  
+   button:hover {  
+    background-color: #ff4500;  
+   }  
+  
+   button:disabled {  
+    background-color: #ccc;  
+    cursor: not-allowed;  
+   }  
+  
+   .scoreboard {  
+    font-size: 18px;  
+    font-weight: bold;  
+    margin: 10px 0;  
+   }  
+  
+   .message {  
+    font-size: 16px;  
+    font-weight: bold;  
+    margin: 10px 0;  
+   }  
+  
+   .word-lists {  
+    display: flex;  
+    justify-content: space-between;  
+    max-width: 500px;  
+    margin: 0 auto;  
+    text-align: left;  
+   }  
+  
+   .word-list {  
+    width: 45%;  
+    padding: 10px;  
+    border: 1px solid #ccc;  
+    border-radius: 8px;  
+    background-color: #f9f9f9;  
+   }  
+  
+   .word-list h3 {  
+    margin-bottom: 10px;  
+   }  
+  
+   ul {  
+    list-style: none;  
+    padding: 0;  
+   }  
+  
+   li {  
+    margin-bottom: 5px;  
+   }  
+  
+   .word-type {  
+    font-style: italic;  
+    color: #777;  
+   }  
+  
+   /* Display current category */  
+   .current-category {  
+    margin-top: 20px;  
+    font-size: 18px;  
+    font-weight: bold;  
+    color: #333;  
+   }  
+  </style>  
+</head>  
+<body>  
+  <h1>Word Master</h1>  
+  <p>Click the letters on the keyboard to form a word! Words earn points based on their length.</p>  
+  
+  <!-- Display the current category -->  
+  <div class="current-category" id="currentCategory">Current Category: None</div>  
+  
+  <div class="game-container">  
+   <div id="keyboard" class="keyboard"></div>  
+   <div class="controls">  
+    <p><strong>Formed Word:</strong> <span id="formedWord"></span></p>  
+    <button id="submitWord" disabled>Submit Word</button>  
+    <button id="eraseLastLetter" disabled>Erase Last Letter</button> <!-- New erase button -->  
+    <p class="scoreboard"><strong>Score:</strong> <span id="score">0</span></p>  
+    <p id="message" class="message"></p>  
+   </div>  
+  </div>  
+  
+  <div class="word-lists">  
+   <div class="word-list">  
+    <h3>Valid Words</h3>  
+    <ul id="validWordsList"></ul>  
+   </div>  
+   <div class="word-list">  
+    <h3>Invalid Words</h3>  
+    <ul id="invalidWordsList"></ul>  
+   </div>  
+  </div>  
+  
+  <script>  
+   // Initialize DOM elements  
+   const keyboard = document.getElementById('keyboard');  
+   const formedWordElement = document.getElementById('formedWord');  
+   const scoreElement = document.getElementById('score');  
+   const messageElement = document.getElementById('message');  
+   const validWordsList = document.getElementById('validWordsList');  
+   const invalidWordsList = document.getElementById('invalidWordsList');  
+   const submitWordButton = document.getElementById('submitWord');  
+   const eraseLastLetterButton = document.getElementById('eraseLastLetter'); // Erase button  
+   const currentCategoryElement = document.getElementById('currentCategory');  
+  
+   let selectedLetters = [];  
+   let score = 0;  
+   let currentCategory = null;  
+   let validWordCount = 0;  // Counter for valid words  
+   let categoriesCompleted = 0; // Counter for completed categories  
+  
+   // Word categories  
+   const wordCategories = {  
+    Fruits: ['APPLE', 'BANANA', 'ORANGE', 'GRAPE', 'PEAR', 'PEACH', 'PLUM', 'LEMON'],  
+    Animals: ['DOG', 'CAT', 'LION', 'TIGER', 'FOX', 'BEAR', 'EAGLE', 'WOLF'],  
+    Objects: ['CHAIR', 'TABLE', 'LAMP', 'PHONE', 'CLOCK', 'PAPER', 'PEN', 'CUP'],  
+    Countries: ['UNITED STATES', 'CANADA', 'BRAZIL', 'FRANCE', 'GERMANY', 'JAPAN', 'AUSTRALIA', 'MEXICO'],  
+    Colors: ['RED', 'BLUE', 'GREEN', 'YELLOW', 'PURPLE', 'ORANGE', 'BLACK', 'WHITE'],  
+    Sports: ['SOCCER', 'BASKETBALL', 'BASEBALL', 'TENNIS', 'CRICKET', 'HOCKEY', 'VOLLEYBALL', 'GOLF'],  
+    Food: ['PIZZA', 'BURGER', 'SUSHI', 'PASTA', 'SALAD', 'SOUP', 'ICE CREAM', 'STEAK'],  
+    Movies: ['TITANIC', 'INCEPTION', 'AVATAR', 'THE GODFATHER', 'JURASSIC PARK', 'STAR WARS', 'THE MATRIX', 'FROZEN'],  
+    Instruments: ['GUITAR', 'PIANO', 'DRUMS', 'VIOLIN', 'FLUTE', 'TRUMPET', 'SAXOPHONE', 'CELLO'],  
+    Technology: ['COMPUTER', 'SMARTPHONE', 'TABLET', 'LAPTOP', 'INTERNET', 'SOFTWARE', 'HARDWARE', 'PRINTER'],  
+    Vehicles: ['CAR', 'TRUCK', 'MOTORCYCLE', 'BICYCLE', 'BUS', 'AIRPLANE', 'BOAT', 'TRAIN'],  
+    Seasons: ['WINTER', 'SPRING', 'SUMMER', 'AUTUMN', 'FALL', 'RAINY SEASON', 'DRY SEASON', 'MONSOON'],  
+    AnimalsExpanded: ['ELEPHANT', 'GIRAFFE', 'RHINO', 'KOALA', 'ZEBRA', 'MONKEY', 'COW', 'HORSE'],  
+    Professions: ['DOCTOR', 'ENGINEER', 'TEACHER', 'NURSE', 'LAWYER', 'POLICE OFFICER', 'CHEF', 'FARMER'],  
+    Landmarks: ['EIFFEL TOWER', 'GREAT WALL OF CHINA', 'STATUE OF LIBERTY', 'CHRIST THE REDEEMER', 'MACHU PICCHU', 'PYRAMIDS OF GIZA', 'TAJ MAHAL', 'COLOSSEUM'],  
+    Weather: ['SUNNY', 'RAINY', 'CLOUDY', 'STORMY', 'SNOWY', 'WINDY', 'FOGGY', 'HURRICANE'],  
+    Tools: ['HAMMER', 'SCREWDRIVER', 'WRENCH', 'PLIERS', 'DRILL', 'SAW', 'TAPE MEASURE', 'LEVEL'],  
+    Plants: ['ROSE', 'TULIP', 'LILY', 'SUNFLOWER', 'DAISY', 'OAK', 'MAPLE', 'PINE'],  
+    Furniture: ['SOFA', 'CHAIR', 'BED', 'TABLE', 'WARDROBE', 'DESK', 'BOOKSHELF', 'CABINET'],  
+    Toys: ['TEDDY BEAR', 'DOLL', 'LEGO', 'PUZZLE', 'YOYO', 'KITE', 'TRAIN SET', 'BICYCLE'],  
+    MusicalGenres: ['ROCK', 'POP', 'JAZZ', 'CLASSICAL', 'HIP HOP', 'R&B', 'COUNTRY', 'FOLK'],  
+    CartoonCharacters: ['MICKEY MOUSE', 'BUGS BUNNY', 'SPONGEBOB', 'TOM CAT', 'JERRY MOUSE', 'SCOOBY DOO', 'YOGI BEAR', 'PINK PANTHER'],  
+    VideoGames: ['MARIO', 'SONIC', 'POKEMON', 'FORTNITE', 'MINECRAFT', 'CALL OF DUTY', 'ASSASSIN\'S CREED', 'GRAND THEFT AUTO'],  
+    ComicBookHeroes: ['SUPERMAN', 'BATMAN', 'SPIDERMAN', 'WONDER WOMAN', 'IRON MAN', 'CAPTAIN AMERICA', 'THOR', 'BLACK WIDOW'],  
+    FamousPaintings: ['MONA LISA', 'STARLIGHT', 'THE SCREAM', 'THE LAST SUPPER', 'GIRL WITH A PEARL EARRING', 'THE NIGHT WATCH', 'LAS MENINAS', 'THE BIRTH OF VENUS'],  
+    AncientCivilizations: ['EGYPT', 'GREECE', 'ROME', 'MESOPOTAMIA', 'BABYLON', 'ASSYRIA', 'PERSIA', 'CHINA'],  
+    ChemicalElements: ['HYDROGEN', 'HELIUM', 'OXYGEN', 'NITROGEN', 'CARBON', 'IRON', 'COPPER', 'GOLD'],  
+    FamousScientists: ['EINSTEIN', 'NEWTON', 'GALILEO', 'MARIE CURIE', 'CHARLES DARWIN', 'LOUIS PASTEUR', 'ALEXANDER FLEMING', 'STEPHEN HAWKING'],  
+    SportsTeams: ['NEW YORK YANKEES', 'BOSTON RED SOX', 'LOS ANGELES LAKERS', 'CHICAGO BULLS', 'MANCHESTER UNITED', 'BARCELONA', 'REAL MADRID', 'BAYERN MUNICH'],  
+    EuropeanCities: ['PARIS', 'LONDON', 'BERLIN', 'ROME', 'AMSTERDAM', 'BARCELONA', 'MADRID', 'ATHENS'],  
+    AsianCities: ['TOKYO', 'SEOUL', 'HONG KONG', 'SINGAPORE', 'BANGKOK', 'BEIJING', 'SHANGHAI', 'MUMBAI'],  
+    SouthAmericanCities: ['RIO DE JANEIRO', 'BUENOS AIRES', 'LIMA', 'SANTIAGO', 'BOGOTA', 'CARACAS', 'QUITO', 'MONTEVIDEO'],  
+    AfricanCities: ['CAIRO', 'LAGOS', 'JOHANNESBURG', 'CAPE TOWN', 'NAIROBI', 'ADDIS ABABA', 'CASABLANCA', 'ALGIERS']  
+  };
+  
+  
+   // Function to initialize the game  
+   function startGame() {  
+    // Choose a random category  
+    const categories = Object.keys(wordCategories);  
+    currentCategory = categories[Math.floor(Math.random() * categories.length)];  
+    currentCategoryElement.textContent = `Current Category: ${currentCategory}`;  
+  
+    // Enable submit button initially  
+    submitWordButton.disabled = false;  
+  
+    // Populate the keyboard with letters  
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';  
+    for (let i = 0; i < alphabet.length; i++) {  
+      const key = document.createElement('div');  
+      key.classList.add('key');  
+      key.textContent = alphabet[i];  
+      key.onclick = function() {  
+       addLetterToWord(alphabet[i]);  
+      };  
+      keyboard.appendChild(key);  
+    }  
+   }  
+  
+   // Add the clicked letter to the formed word  
+   function addLetterToWord(letter) {  
+    selectedLetters.push(letter);  
+    formedWordElement.textContent = selectedLetters.join('');  
+    submitWordButton.disabled = false;  
+    eraseLastLetterButton.disabled = false; // Enable erase button  
+   }  
+  
+   // Erase the last letter from the formed word  
+   eraseLastLetterButton.onclick = function() {  
+    selectedLetters.pop();  
+    formedWordElement.textContent = selectedLetters.join('');  
+    if (selectedLetters.length === 0) {  
+      eraseLastLetterButton.disabled = true; // Disable erase button if no letters left  
+    }  
+   };  
+  
+   // Submit the formed word  
+   submitWordButton.onclick = function() {  
+    const formedWord = formedWordElement.textContent.toUpperCase();  
+    if (isValidWord(formedWord)) {  
+      validWordCount++;  
+      score += formedWord.length;  
+      validWordsList.innerHTML += `<li>${formedWord}</li>`;  
+      if (validWordCount === 5) {  
+       proceedToNextCategory();  
+      }  
+    } else {  
+      invalidWordsList.innerHTML += `<li>${formedWord}</li>`;  
+    }  
+    resetFormedWord();  
+    updateScore();  
+    displayMessage();  
+   };  
+  
+   // Check if the formed word is valid  
+   function isValidWord(word) {  
+    const categoryWords = wordCategories[currentCategory];  
+    return categoryWords.includes(word);  
+   }  
+  
+   // Reset the formed word  
+   function resetFormedWord() {  
+    selectedLetters = [];  
+    formedWordElement.textContent = '';  
+    submitWordButton.disabled = true;  
+    eraseLastLetterButton.disabled = true; // Disable erase button  
+   }  
+  
+   // Update the score  
+   function updateScore() {  
+    scoreElement.textContent = score;  
+   }  
+  
+   // Display a message based on the game status  
+   function displayMessage() {  
+    messageElement.textContent = `You've formed ${validWordCount} valid words in the current category!`;  
+   }  
+  
+   // Proceed to the next category  
+   function proceedToNextCategory() {  
+    categoriesCompleted++;  
+    validWordCount = 0;  
+    validWordsList.innerHTML = '';  
+    invalidWordsList.innerHTML = '';  
+    const categories = Object.keys(wordCategories);  
+    currentCategory = categories[Math.floor(Math.random() * categories.length)];  
+    currentCategoryElement.textContent = `Current Category: ${currentCategory}`;  
+    messageElement.textContent = `You've completed ${categoriesCompleted} categories!`;  
+   }  
+  
+   // Start the game  
+   startGame();  
+  </script>  
+</body>  
 </html>
-
