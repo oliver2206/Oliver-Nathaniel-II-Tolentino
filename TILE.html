@@ -16,7 +16,6 @@
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
-            overflow: hidden; /* Prevent scrolling */
         }
 
         h1 {
@@ -30,10 +29,6 @@
             gap: 10px;
             justify-content: center;
             margin: 50px auto;
-            position: relative;
-            width: 100%;
-            height: 80vh; /* Fixed height for container */
-            overflow: hidden; /* Hide fruits overflowing */
         }
 
         .tile {
@@ -51,8 +46,6 @@
             color: white;
             cursor: pointer;
             transition: transform 0.3s ease;
-            position: relative;
-            z-index: 2; /* Make sure tiles are above fruits */
         }
 
         .tile:active {
@@ -71,43 +64,12 @@
             cursor: default;
             background-image: none;
         }
-
-        /* Fruit bounce animation */
-        .fruit {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            background-size: contain;
-            background-repeat: no-repeat;
-            animation: bounce 10s infinite ease-in-out;
-            z-index: 1; /* Make sure fruits are behind the tiles */
-        }
-
-        /* Keyframes for random bouncing */
-        @keyframes bounce {
-            0% {
-                transform: translate(0, 0);
-            }
-            25% {
-                transform: translate(150px, -200px);
-            }
-            50% {
-                transform: translate(250px, 100px);
-            }
-            75% {
-                transform: translate(-150px, -100px);
-            }
-            100% {
-                transform: translate(0, 0);
-            }
-        }
-
+        
     </style>
 </head>
 <body>
     <h1>Tile Flip Challenge</h1>
     <div class="game-container" id="gameContainer"></div>
-
     <script>
         // Array of symbols to be used for the tiles
         const symbols = ['🍎', '🍌', '🍇', '🍉', '🍒', '🍓', '🍍', '🥝', '🍑', 
@@ -124,7 +86,6 @@
             } else {
                 startNewGame(); // Start a new game
             }
-            addFruits(); // Add bouncing fruits behind the tiles
         }
 
         // Start a new game by resetting variables and generating new tiles
@@ -225,25 +186,9 @@
             renderTiles(); // Render the tiles
         }
 
-        // Add fruit elements that will bounce behind the tiles
-        function addFruits() {
-            const fruits = ['🍎', '🍌', '🍇', '🍉', '🍒', '🍓', '🍍', '🥝', '🍑', 
-                            '🥭', '🍋', '🍏', '🍐', '🥥', '🥕', '🌽', '🍅', '🍆'];
-
-            // Add many more fruits to cover the background
-            for (let i = 0; i < 50; i++) {  // Create 50 fruits
-                const fruit = fruits[Math.floor(Math.random() * fruits.length)];
-                const fruitDiv = document.createElement('div');
-                fruitDiv.classList.add('fruit');
-                fruitDiv.textContent = fruit;
-                fruitDiv.style.left = `${Math.random() * window.innerWidth}px`; // Random horizontal position
-                fruitDiv.style.top = `${Math.random() * window.innerHeight}px`; // Random vertical position
-                gameContainer.appendChild(fruitDiv);
-            }
-        }
-
         // Start the game when the page loads
         window.onload = initializeGame;
+
 
     </script>
 </body>
