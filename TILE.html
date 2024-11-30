@@ -16,7 +16,7 @@
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
-            overflow: hidden; /* Prevent scrolling */
+            overflow: hidden;
         }
 
         h1 {
@@ -30,8 +30,6 @@
             gap: 10px;
             justify-content: center;
             margin: 50px auto;
-            position: relative;
-            overflow: hidden; /* Hide fruits overflowing */
         }
 
         .tile {
@@ -49,13 +47,10 @@
             color: white;
             cursor: pointer;
             transition: transform 0.3s ease;
-            position: relative;
-            z-index: 2; /* Make sure tiles are above fruits */
         }
 
         .tile:active {
             transform: scale(0.9);
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
         }
 
         .tile.revealed {
@@ -65,37 +60,10 @@
         }
 
         .tile.matched {
-            background-color: #90ee90;
+            background-color: transparent;
             cursor: default;
             background-image: none;
         }
-
-        /* Fruit bounce animation */
-        .fruit {
-            position: absolute;
-            animation: bounce 10s infinite ease-in-out;
-            z-index: 1; /* Make sure fruits are behind the tiles */
-        }
-
-        /* Keyframes for random bouncing */
-        @keyframes bounce {
-            0% {
-                transform: translate(0, 0);
-            }
-            25% {
-                transform: translate(150px, -200px);
-            }
-            50% {
-                transform: translate(250px, 100px);
-            }
-            75% {
-                transform: translate(-150px, -100px);
-            }
-            100% {
-                transform: translate(0, 0);
-            }
-        }
-
     </style>
 </head>
 <body>
@@ -103,166 +71,98 @@
     <div class="game-container" id="gameContainer"></div>
 
     <script>
-        // Array of symbols to be used for the tiles
-        const symbols = ['🍎', '🍌', '🍇', '🍉', '🍒', '🍓', '🍍', '🥝', '🍑', 
-                         '🥭', '🍋', '🍏', '🍐', '🥥', '🥕', '🌽', '🍅', '🍆'];
+        const symbols = [
+            '🍎', '🍌', '🍇', '🍉', '🍒', '🍓', '🍍', '🥝', '🍑', 
+            '🥭', '🍋', '🍏', '🍐', '🥥', '🥕', '🌽', '🍅', '🍆'
+        ]; // 18 unique symbols for 36 tiles
 
-        // Variables to hold the state of the game
-        let tiles, gameContainer, firstTile = null, secondTile = null, matches = 0, gameStarted = false, totalPairs;
+        let tiles, firstTile = null, secondTile = null, matches = 0, totalPairs;
 
-        // Initialize the game (either load saved progress or start a new game)
         function initializeGame() {
-            const savedState = localStorage.getItem('tileFlipGameState');
-            if (savedState) {
-                loadGameProgress(); // Load saved progress
-            } else {
-                startNewGame(); // Start a new game
-            }
-            addFruits(); // Add bouncing fruits behind the tiles
-        }
-
-        // Start a new game by resetting variables and generating new tiles
-        function startNewGame() {
             matches = 0;
-            gameStarted = true;
-            const selectedSymbols = symbols.sort(() => 0.5 - Math.random()).slice(0, 9); // Pick a random subset of symbols
-            tiles = [...selectedSymbols, ...selectedSymbols].sort(() => 0.5 - Math.random()); // Create pairs and shuffle
+            const selectedSymbols = symbols.sort(() => 0.5 - Math.random()).slice(0, 18); // Select 18 symbols
+            tiles = [...selectedSymbols, ...selectedSymbols].sort(() => 0.5 - Math.random()); // Duplicate and shuffle
             totalPairs = selectedSymbols.length;
-            renderTiles(); // Render the tiles on the page
+            renderTiles();
+            revealAllTiles(); // Reveal all tiles at the start
         }
 
-        // Render the tiles on the game board
         function renderTiles() {
-            gameContainer = document.getElementById('gameContainer');
-            gameContainer.innerHTML = ''; // Clear the container
+            const gameContainer = document.getElementById('gameContainer');
+            gameContainer.innerHTML = '';
             tiles.forEach((symbol, index) => {
-                const tile = createTile(symbol, index); // Create each tile
-                gameContainer.appendChild(tile); // Add tile to the container
+                const tile = createTile(symbol, index);
+                gameContainer.appendChild(tile);
             });
         }
 
-        // Create a single tile element
         function createTile(symbol, index) {
             const tile = document.createElement('div');
             tile.classList.add('tile');
-            tile.dataset.symbol = symbol; // Store the symbol as a dataset attribute
-            tile.dataset.index = index; // Store the index as a dataset attribute
-            tile.addEventListener('click', () => handleTileClick(tile)); // Add click event listener
+            tile.dataset.symbol = symbol;
+            tile.dataset.index = index;
             return tile;
         }
 
-        // Handle the logic when a tile is clicked
+        function revealAllTiles() {
+            const allTiles = document.querySelectorAll('.tile');
+            allTiles.forEach(tile => {
+                tile.textContent = tile.dataset.symbol;
+                tile.classList.add('revealed');
+            });
+
+            // Hide all tiles after 10 seconds
+            setTimeout(() => {
+                allTiles.forEach(tile => {
+                    tile.textContent = '';
+                    tile.classList.remove('revealed');
+                    tile.addEventListener('click', () => handleTileClick(tile));
+                });
+            }, 10000); // 10 seconds
+        }
+
         function handleTileClick(tile) {
-            // Ignore click if the game isn't started, tile is already revealed/matched, or another tile is in progress
-            if (!gameStarted || tile.classList.contains('revealed') || tile.classList.contains('matched') || secondTile) {
+            if (tile.classList.contains('revealed') || tile.classList.contains('matched') || secondTile) {
                 return;
             }
 
-            tile.classList.add('revealed'); // Mark the tile as revealed
-            tile.textContent = tile.dataset.symbol; // Show the symbol on the tile
+            tile.classList.add('revealed');
+            tile.textContent = tile.dataset.symbol;
 
             if (!firstTile) {
-                firstTile = tile; // Set the first tile
+                firstTile = tile;
             } else {
-                secondTile = tile; // Set the second tile
+                secondTile = tile;
                 if (firstTile.dataset.symbol === secondTile.dataset.symbol) {
-                    // If the two tiles match
-                    firstTile.classList.add('matched');
-                    secondTile.classList.add('matched');
-                    firstTile = null;
-                    secondTile = null;
-                    matches++; // Increase the match count
-                    checkWin(); // Check if the game is won
-                } else {
-                    // If the two tiles don't match
                     setTimeout(() => {
-                        firstTile.classList.remove('revealed');
+                        firstTile.classList.add('matched');
+                        secondTile.classList.add('matched');
                         firstTile.textContent = '';
-                        secondTile.classList.remove('revealed');
                         secondTile.textContent = '';
                         firstTile = null;
                         secondTile = null;
-                    }, 1000); // Flip tiles back after a delay
+                        matches++;
+                        checkWin();
+                    }, 500);
+                } else {
+                    setTimeout(() => {
+                        firstTile.classList.remove('revealed');
+                        secondTile.classList.remove('revealed');
+                        firstTile.textContent = '';
+                        secondTile.textContent = '';
+                        firstTile = null;
+                        secondTile = null;
+                    }, 1000);
                 }
             }
-            saveGameProgress(); // Save the game state
         }
 
-        // Check if the player has won the game
         function checkWin() {
             if (matches === totalPairs) {
-                setTimeout(() => {
-                    alert('Congratulations! You won!'); // Display a win message
-                    startNewGame(); // Start a new game
-                }, 500);
+                initializeGame(); // Automatically restart the game without any alert
             }
         }
 
-        // Save the current game state to localStorage
-        function saveGameProgress() {
-            const gameState = {
-                tiles: tiles,
-                matches: matches,
-                gameStarted: gameStarted,
-                totalPairs: totalPairs
-            };
-            localStorage.setItem('tileFlipGameState', JSON.stringify(gameState));
-        }
-
-        // Load the game state from localStorage
-        function loadGameProgress() {
-            const savedState = JSON.parse(localStorage.getItem('tileFlipGameState'));
-            tiles = savedState.tiles; // Load tiles
-            matches = savedState.matches; // Load match count
-            gameStarted = savedState.gameStarted; // Load game status
-            totalPairs = savedState.totalPairs; // Load total pairs
-            renderTiles(); // Render the tiles
-        }
-
-        // Add fruit elements that will bounce behind the tiles with customized sizes
-        function addFruits() {
-            const fruits = ['🍎', '🍌', '🍇', '🍉', '🍒', '🍓', '🍍', '🥝', '🍑', 
-                            '🥭', '🍋', '🍏', '🍐', '🥥', '🥕', '🌽', '🍅', '🍆'];
-
-            const fruitSizes = {
-                '🍎': '6rem',  // Apple
-                '🍌': '3rem',  // Banana
-                '🍇': '2.5rem',  // Grapes
-                '🍉': '3.5rem',  // Watermelon
-                '🍒': '2rem',  // Cherry
-                '🍓': '2rem',  // Strawberry
-                '🍍': '3rem',  // Pineapple
-                '🥝': '2.5rem', // Kiwi
-                '🍑': '6rem',  // Peach
-                '🥭': '3rem',  // Mango
-                '🍋': '2.5rem',  // Lemon
-                '🍏': '2.5rem',  // Green Apple
-                '🍐': '2.5rem',  // Pear
-                '🥥': '3rem',  // Coconut
-                '🥕': '2rem',  // Carrot
-                '🌽': '3rem',  // Corn
-                '🍅': '2.5rem',  // Tomato
-                '🍆': '6 rem'   // Eggplant
-            };
-
-            for (let i = 0; i < 50; i++) { // Create 50 fruits
-                const fruit = fruits[Math.floor(Math.random() * fruits.length)];
-                const fruitDiv = document.createElement('div');
-                fruitDiv.classList.add('fruit');
-                fruitDiv.textContent = fruit;
-
-                // Apply size based on the fruit type
-                fruitDiv.style.fontSize = fruitSizes[fruit] || '2.5rem'; // Default size if not specified
-
-                // Random position for each fruit
-                fruitDiv.style.left = `${Math.random() * window.innerWidth}px`;
-                fruitDiv.style.top = `${Math.random() * window.innerHeight}px`;
-
-                gameContainer.appendChild(fruitDiv);
-            }
-        }
-
-        // Initialize the game when the page loads
         window.onload = initializeGame;
     </script>
 </body>
