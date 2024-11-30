@@ -5,7 +5,7 @@
     // Add bouncing fruits to the background
     function addFruits() {
         const body = document.body;
-        for (let i = 0; i < 20; i++) {
+        for (let i = 0; i < 50; i++) {
             const fruitDiv = document.createElement('div');
             fruitDiv.classList.add('fruit');
             fruitDiv.textContent = fruits[Math.floor(Math.random() * fruits.length)];
