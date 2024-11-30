@@ -3,167 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tile Flip Challenge</title>
+    <title>Game Home Page</title>
     <style>
-        /* Basic styling for the game */
+        /* General Styles */
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
             height: 100vh;
-            background-image: url('https://i.pinimg.com/736x/e3/a4/48/e3a4482bff09d997f675af868e43ff2b.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
             overflow: hidden;
-        }
-
-        h1 {
-            margin-top: 20px;
-            color: white;
-        }
-
-        .game-container {
-            display: grid;
-            grid-template-columns: repeat(6, 90px);
-            gap: 10px;
-            justify-content: center;
-            margin: 50px auto;
-        }
-
-        .tile {
-            width: 90px;
-            height: 90px;
-            background-image: url('./PNGFILE/TILE.png');
-            background-size: cover;
-            background-position: center;
-            border-radius: 10px;
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: center;
-            font-size: 36px;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0); /* Transparent background */
+            position: relative; /* Needed for absolute positioning of fruit */
+        }
+
+        /* Header Styles */
+        .header {
+            text-align: center;
+            position: relative;
+            z-index: 2; /* Ensures the header is above the background */
+        }
+
+        /* Logo Styles */
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 10px;
+            border-radius: 50%;
+            object-fit: contain;
+        }
+
+        /* Game Title */
+        h1 {
+            font-size: 32px;
             font-weight: bold;
+            color: black;
+            margin: 0;
+        }
+
+        /* Container for Buttons */
+        .container {
+            text-align: center;
+            margin-top: 20px;
+            position: relative;
+            z-index: 2; /* Ensures buttons appear above the fruits */
+        }
+
+        /* Button Styles */
+        .button {
+            display: block;
+            width: 300px;
+            margin: 10px auto;
+            padding: 15px;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
             color: white;
+            background: #444;
+            text-decoration: none;
+            border: 2px solid #777;
+            border-radius: 10px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
             cursor: pointer;
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
         }
 
-        .tile:active {
-            transform: scale(0.9);
+        .button:hover {
+            background: #666;
+            transform: scale(1.05);
         }
 
-        .tile.revealed {
-            background-color: #f5faf6;
-            cursor: default;
-            background-image: none;
+        .button:active {
+            background: #888;
+            transform: scale(0.95);
         }
 
-        .tile.matched {
-            background-color: transparent;
-            cursor: default;
-            background-image: none;
+        /* Bouncing Fruits */
+        .fruit {
+            position: absolute;
+            font-size: 4rem; /* Larger size for fruits */
+            animation: bounce 10s infinite ease-in-out;
+            z-index: 1; /* Fruits are below the content */
+        }
+
+        @keyframes bounce {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(150px, -200px); }
+            50% { transform: translate(250px, 100px); }
+            75% { transform: translate(-150px, -100px); }
+            100% { transform: translate(0, 0); }
         }
     </style>
 </head>
 <body>
-    <h1>Tile Flip Challenge</h1>
-    <div class="game-container" id="gameContainer"></div>
+    <!-- Header with Logo and Title -->
+    <div class="header">
+        <img src="./PNGFILE/TILE.png" alt="Logo" class="logo" id="logo">
+        <h1 id="gameTitle">Fruit Fortune Flip</h1>
+    </div>
 
+    <!-- Button Container -->
+    <div class="container">
+        <a class="button" href="./iwant design.html">START</a>
+        <a class="button" href="">PRACTICE</a>
+        <a class="button" href="">CHALLENGE</a>
+        <a class="button" href="">COMPETE</a>
+    </div>
+
+    <!-- Script for Bouncing Fruits -->
     <script>
-        const symbols = [
-            '🍎', '🍌', '🍇', '🍉', '🍒', '🍓', '🍍', '🥝', '🍑', 
-            '🥭', '🍋', '🍏', '🍐', '🥥', '🥕', '🌽', '🍅', '🍆'
-        ]; // 18 unique symbols for 36 tiles
+        const fruits = ['🍎', '🍌', '🍇', '🍉', '🍒', '🍓', '🍍', '🥝', '🍑', 
+                        '🥭', '🍋', '🍏', '🍐', '🥥', '🥕', '🌽', '🍅', '🍆'];
 
-        let tiles, firstTile = null, secondTile = null, matches = 0, totalPairs;
-
-        function initializeGame() {
-            matches = 0;
-            const selectedSymbols = symbols.sort(() => 0.5 - Math.random()).slice(0, 18); // Select 18 symbols
-            tiles = [...selectedSymbols, ...selectedSymbols].sort(() => 0.5 - Math.random()); // Duplicate and shuffle
-            totalPairs = selectedSymbols.length;
-            renderTiles();
-            revealAllTiles(); // Reveal all tiles at the start
-        }
-
-        function renderTiles() {
-            const gameContainer = document.getElementById('gameContainer');
-            gameContainer.innerHTML = '';
-            tiles.forEach((symbol, index) => {
-                const tile = createTile(symbol, index);
-                gameContainer.appendChild(tile);
-            });
-        }
-
-        function createTile(symbol, index) {
-            const tile = document.createElement('div');
-            tile.classList.add('tile');
-            tile.dataset.symbol = symbol;
-            tile.dataset.index = index;
-            return tile;
-        }
-
-        function revealAllTiles() {
-            const allTiles = document.querySelectorAll('.tile');
-            allTiles.forEach(tile => {
-                tile.textContent = tile.dataset.symbol;
-                tile.classList.add('revealed');
-            });
-
-            // Hide all tiles after 10 seconds
-            setTimeout(() => {
-                allTiles.forEach(tile => {
-                    tile.textContent = '';
-                    tile.classList.remove('revealed');
-                    tile.addEventListener('click', () => handleTileClick(tile));
-                });
-            }, 10000); // 10 seconds
-        }
-
-        function handleTileClick(tile) {
-            if (tile.classList.contains('revealed') || tile.classList.contains('matched') || secondTile) {
-                return;
-            }
-
-            tile.classList.add('revealed');
-            tile.textContent = tile.dataset.symbol;
-
-            if (!firstTile) {
-                firstTile = tile;
-            } else {
-                secondTile = tile;
-                if (firstTile.dataset.symbol === secondTile.dataset.symbol) {
-                    setTimeout(() => {
-                        firstTile.classList.add('matched');
-                        secondTile.classList.add('matched');
-                        firstTile.textContent = '';
-                        secondTile.textContent = '';
-                        firstTile = null;
-                        secondTile = null;
-                        matches++;
-                        checkWin();
-                    }, 500);
-                } else {
-                    setTimeout(() => {
-                        firstTile.classList.remove('revealed');
-                        secondTile.classList.remove('revealed');
-                        firstTile.textContent = '';
-                        secondTile.textContent = '';
-                        firstTile = null;
-                        secondTile = null;
-                    }, 1000);
-                }
+        // Add bouncing fruits to the background
+        function addFruits() {
+            const body = document.body;
+            for (let i = 0; i < 20; i++) {
+                const fruitDiv = document.createElement('div');
+                fruitDiv.classList.add('fruit');
+                fruitDiv.textContent = fruits[Math.floor(Math.random() * fruits.length)];
+                fruitDiv.style.left = `${Math.random() * window.innerWidth}px`;
+                fruitDiv.style.top = `${Math.random() * window.innerHeight}px`;
+                fruitDiv.style.animationDuration = `${Math.random() * 5 + 5}s`;
+                body.appendChild(fruitDiv);
             }
         }
 
-        function checkWin() {
-            if (matches === totalPairs) {
-                initializeGame(); // Automatically restart the game without any alert
-            }
-        }
-
-        window.onload = initializeGame;
+        // Initialize when the page loads
+        window.onload = () => {
+            addFruits();
+        };
     </script>
 </body>
 </html>
