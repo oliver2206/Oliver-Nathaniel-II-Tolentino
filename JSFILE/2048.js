@@ -214,12 +214,28 @@ document.addEventListener('DOMContentLoaded', () => {
         generate();
     }
 
+    // Keyboard control for desktop
+    function control(e) {
+        if (e.keyCode === 37) {
+            keyLeft(); // Left arrow key
+        } else if (e.keyCode === 38) {
+            keyUp(); // Up arrow key
+        } else if (e.keyCode === 39) {
+            keyRight(); // Right arrow key
+        } else if (e.keyCode === 40) {
+            keyDown(); // Down arrow key
+        }
+    }
+
+    // Add event listener for keyboard controls
+    document.addEventListener('keydown', control);
+
     // Check for win condition
     function checkForWin() {
         for (let i = 0; i < squares.length; i++) {
             if (squares[i].innerHTML == 2048) {
                 resultDisplay.innerHTML = 'You WIN';
-                document.removeEventListener('keyup', control);
+                document.removeEventListener('keydown', control);
                 setTimeout(() => clear(), 3000);
             }
         }
@@ -235,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (zeros === 0) {
             resultDisplay.innerHTML = 'You LOSE';
-            document.removeEventListener('keyup', control);
+            document.removeEventListener('keydown', control);
             setTimeout(() => clear(), 3000);
         }
     }
