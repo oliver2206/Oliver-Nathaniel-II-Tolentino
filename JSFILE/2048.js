@@ -57,20 +57,100 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Similar moveLeft, moveUp, and moveDown functions should go here
+    // Move tiles to the left
     function moveLeft() {
-        // Implement similar to moveRight (move and merge to the left)
+        for (let i = 0; i < 16; i++) {
+            if (i % 4 === 0) {
+                let totalOne = squares[i].innerHTML;
+                let totalTwo = squares[i + 1].innerHTML;
+                let totalThree = squares[i + 2].innerHTML;
+                let totalFour = squares[i + 3].innerHTML;
+                let row = [parseInt(totalOne), parseInt(totalTwo), parseInt(totalThree), parseInt(totalFour)];
+
+                let filteredRow = row.filter(num => num);
+                let missing = 4 - filteredRow.length;
+                let zeros = Array(missing).fill(0);
+                let newRow = filteredRow.concat(zeros);
+
+                squares[i].innerHTML = newRow[0];
+                squares[i + 1].innerHTML = newRow[1];
+                squares[i + 2].innerHTML = newRow[2];
+                squares[i + 3].innerHTML = newRow[3];
+            }
+        }
     }
 
+    // Move tiles up
     function moveUp() {
-        // Implement logic for moving up
+        for (let i = 0; i < 4; i++) {
+            let totalOne = squares[i].innerHTML;
+            let totalTwo = squares[i + width].innerHTML;
+            let totalThree = squares[i + (width * 2)].innerHTML;
+            let totalFour = squares[i + (width * 3)].innerHTML;
+            let column = [parseInt(totalOne), parseInt(totalTwo), parseInt(totalThree), parseInt(totalFour)];
+
+            let filteredColumn = column.filter(num => num);
+            let missing = 4 - filteredColumn.length;
+            let zeros = Array(missing).fill(0);
+            let newColumn = filteredColumn.concat(zeros);
+
+            squares[i].innerHTML = newColumn[0];
+            squares[i + width].innerHTML = newColumn[1];
+            squares[i + (width * 2)].innerHTML = newColumn[2];
+            squares[i + (width * 3)].innerHTML = newColumn[3];
+        }
     }
 
+    // Move tiles down
     function moveDown() {
-        // Implement logic for moving down
+        for (let i = 0; i < 4; i++) {
+            let totalOne = squares[i].innerHTML;
+            let totalTwo = squares[i + width].innerHTML;
+            let totalThree = squares[i + (width * 2)].innerHTML;
+            let totalFour = squares[i + (width * 3)].innerHTML;
+            let column = [parseInt(totalOne), parseInt(totalTwo), parseInt(totalThree), parseInt(totalFour)];
+
+            let filteredColumn = column.filter(num => num);
+            let missing = 4 - filteredColumn.length;
+            let zeros = Array(missing).fill(0);
+            let newColumn = zeros.concat(filteredColumn);
+
+            squares[i].innerHTML = newColumn[0];
+            squares[i + width].innerHTML = newColumn[1];
+            squares[i + (width * 2)].innerHTML = newColumn[2];
+            squares[i + (width * 3)].innerHTML = newColumn[3];
+        }
     }
 
-    // Function to handle swipe event
+    // Combine tiles in a row
+    function combineRow() {
+        for (let i = 0; i < 15; i++) {
+            if (squares[i].innerHTML === squares[i + 1].innerHTML) {
+                let combinedTotal = parseInt(squares[i].innerHTML) + parseInt(squares[i + 1].innerHTML);
+                squares[i].innerHTML = combinedTotal;
+                squares[i + 1].innerHTML = 0;
+                score += combinedTotal;
+                scoreDisplay.innerHTML = score;
+            }
+        }
+        checkForWin();
+    }
+
+    // Combine tiles in a column
+    function combineColumn() {
+        for (let i = 0; i < 12; i++) {
+            if (squares[i].innerHTML === squares[i + width].innerHTML) {
+                let combinedTotal = parseInt(squares[i].innerHTML) + parseInt(squares[i + width].innerHTML);
+                squares[i].innerHTML = combinedTotal;
+                squares[i + width].innerHTML = 0;
+                score += combinedTotal;
+                scoreDisplay.innerHTML = score;
+            }
+        }
+        checkForWin();
+    }
+
+    // Handle swipe events
     function handleSwipe(e) {
         if (e.type === 'touchstart') {
             startX = e.changedTouches[0].screenX;
@@ -108,43 +188,33 @@ document.addEventListener('DOMContentLoaded', () => {
     // Key control functions for each swipe direction
     function keyRight() {
         moveRight();
-        combineRow(); // Combine tiles if possible
+        combineRow();
         moveRight();
-        generate(); // Generate a new number
+        generate();
     }
 
     function keyLeft() {
         moveLeft();
-        combineRow(); // Combine tiles if possible
+        combineRow();
         moveLeft();
-        generate(); // Generate a new number
+        generate();
     }
 
     function keyUp() {
         moveUp();
-        combineColumn(); // Combine tiles if possible
+        combineColumn();
         moveUp();
-        generate(); // Generate a new number
+        generate();
     }
 
     function keyDown() {
         moveDown();
-        combineColumn(); // Combine tiles if possible
+        combineColumn();
         moveDown();
-        generate(); // Generate a new number
+        generate();
     }
 
-    // Combine function for rows
-    function combineRow() {
-        // Implement the logic to combine tiles in a row if they are the same
-    }
-
-    // Combine function for columns
-    function combineColumn() {
-        // Implement the logic to combine tiles in a column if they are the same
-    }
-
-    // Check for win and game over logic
+    // Check for win condition
     function checkForWin() {
         for (let i = 0; i < squares.length; i++) {
             if (squares[i].innerHTML == 2048) {
@@ -155,6 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Check for game over condition
     function checkForGameOver() {
         let zeros = 0;
         for (let i = 0; i < squares.length; i++) {
@@ -169,30 +240,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Clear timer
+    // Clear interval
     function clear() {
         clearInterval(myTimer);
     }
 
-    // Add colors to tiles based on their values
+    // Add colors based on tile values
     function addColours() {
         for (let i = 0; i < squares.length; i++) {
-            if (squares[i].innerHTML == 0) squares[i].style.backgroundColor = '#afa192';
-            else if (squares[i].innerHTML == 2) squares[i].style.backgroundColor = '#eee4da';
-            else if (squares[i].innerHTML == 4) squares[i].style.backgroundColor = '#ede0c8';
-            else if (squares[i].innerHTML == 8) squares[i].style.backgroundColor = '#f2b179';
-            else if (squares[i].innerHTML == 16) squares[i].style.backgroundColor = '#ffcea4';
-            else if (squares[i].innerHTML == 32) squares[i].style.backgroundColor = '#e8c064';
-            else if (squares[i].innerHTML == 64) squares[i].style.backgroundColor = '#ffab6e';
-            else if (squares[i].innerHTML == 128) squares[i].style.backgroundColor = '#fd9982';
-            else if (squares[i].innerHTML == 256) squares[i].style.backgroundColor = '#ead79c';
-            else if (squares[i].innerHTML == 512) squares[i].style.backgroundColor = '#76daff';
-            else if (squares[i].innerHTML == 1024) squares[i].style.backgroundColor = '#beeaa5';
-            else if (squares[i].innerHTML == 2048) squares[i].style.backgroundColor = '#d7d4f0';
+            if (squares[i].innerHTML == 0) squares[i].style.backgroundColor = '#ccc0b3';
+            if (squares[i].innerHTML == 2) squares[i].style.backgroundColor = '#eee4da';
+            if (squares[i].innerHTML == 4) squares[i].style.backgroundColor = '#ede0c8';
+            if (squares[i].innerHTML == 8) squares[i].style.backgroundColor = '#f2b179';
+            if (squares[i].innerHTML == 16) squares[i].style.backgroundColor = '#f59563';
+            if (squares[i].innerHTML == 32) squares[i].style.backgroundColor = '#f67c5f';
+            if (squares[i].innerHTML == 64) squares[i].style.backgroundColor = '#f65e3b';
+            if (squares[i].innerHTML == 128) squares[i].style.backgroundColor = '#f4d06f';
+            if (squares[i].innerHTML == 256) squares[i].style.backgroundColor = '#f1c23f';
+            if (squares[i].innerHTML == 512) squares[i].style.backgroundColor = '#e1c039';
+            if (squares[i].innerHTML == 1024) squares[i].style.backgroundColor = '#e0c231';
+            if (squares[i].innerHTML == 2048) squares[i].style.backgroundColor = '#c58c2e';
         }
     }
 
-    addColours();
-    var myTimer = setInterval(addColours, 50);
-
+    setInterval(addColours, 50);
 });
