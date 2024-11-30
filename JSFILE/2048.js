@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     createBoard();
 
-    // Generate a new number
+    // Generate a new number (2 or 4)
     function generate() {
         let randomNumber = Math.floor(Math.random() * squares.length);
         if (squares[randomNumber].innerHTML == 0) {
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else generate();
     }
 
-    // Move the tiles based on swipe direction
+    // Move the tiles based on swipe direction (right)
     function moveRight() {
         for (let i = 0; i < 16; i++) {
             if (i % 4 === 0) {
@@ -57,7 +57,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Similar moveLeft, moveUp, and moveDown functions go here
+    // Similar moveLeft, moveUp, and moveDown functions should go here
+    function moveLeft() {
+        // Implement similar to moveRight (move and merge to the left)
+    }
+
+    function moveUp() {
+        // Implement logic for moving up
+    }
+
+    function moveDown() {
+        // Implement logic for moving down
+    }
 
     // Function to handle swipe event
     function handleSwipe(e) {
@@ -73,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const diffX = endX - startX;
             const diffY = endY - startY;
 
+            // Swipe detection: check if horizontal swipe is greater than vertical swipe
             if (Math.abs(diffX) > Math.abs(diffY)) {
                 if (diffX > 0) {
                     keyRight(); // Swipe right
@@ -89,37 +101,47 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Add swipe event listeners
+    // Add swipe event listeners for touch devices
     gridDisplay.addEventListener('touchstart', handleSwipe);
     gridDisplay.addEventListener('touchend', handleSwipe);
 
-    // Key control functions (already existing)
+    // Key control functions for each swipe direction
     function keyRight() {
         moveRight();
-        combineRow();
+        combineRow(); // Combine tiles if possible
         moveRight();
-        generate();
+        generate(); // Generate a new number
     }
 
     function keyLeft() {
         moveLeft();
-        combineRow();
+        combineRow(); // Combine tiles if possible
         moveLeft();
-        generate();
+        generate(); // Generate a new number
     }
 
     function keyUp() {
         moveUp();
-        combineColumn();
+        combineColumn(); // Combine tiles if possible
         moveUp();
-        generate();
+        generate(); // Generate a new number
     }
 
     function keyDown() {
         moveDown();
-        combineColumn();
+        combineColumn(); // Combine tiles if possible
         moveDown();
-        generate();
+        generate(); // Generate a new number
+    }
+
+    // Combine function for rows
+    function combineRow() {
+        // Implement the logic to combine tiles in a row if they are the same
+    }
+
+    // Combine function for columns
+    function combineColumn() {
+        // Implement the logic to combine tiles in a column if they are the same
     }
 
     // Check for win and game over logic
@@ -152,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
         clearInterval(myTimer);
     }
 
-    // Add colors to tiles
+    // Add colors to tiles based on their values
     function addColours() {
         for (let i = 0; i < squares.length; i++) {
             if (squares[i].innerHTML == 0) squares[i].style.backgroundColor = '#afa192';
