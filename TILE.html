@@ -16,7 +16,6 @@
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
-            
         }
 
         h1 {
@@ -68,6 +67,18 @@
             background-color: #90ee90;
             cursor: default;
             background-image: none;
+            animation: fadeOut 0.5s ease-out forwards; /* Apply fade-out effect on matched tiles */
+        }
+
+        /* Keyframes for fading out matched tiles */
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0.5); /* Shrink the tile for effect */
+            }
         }
 
         /* Fruit bounce animation */
@@ -179,6 +190,10 @@
                     // If the two tiles match
                     firstTile.classList.add('matched');
                     secondTile.classList.add('matched');
+                    setTimeout(() => {
+                        firstTile.remove();  // Remove matched tiles after fade-out
+                        secondTile.remove(); // Remove matched tiles after fade-out
+                    }, 500);  // Wait for the fade-out effect before removal
                     firstTile = null;
                     secondTile = null;
                     matches++; // Increase the match count
