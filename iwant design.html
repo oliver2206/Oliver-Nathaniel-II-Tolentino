@@ -82,7 +82,7 @@
         .tile {
             width: 90px;
             height: 90px;
-            background-image: url(./PNGFILE/TILE\ 9090.png);
+            background-image: url('./PNGFILE/TILE 9090.png');
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -123,21 +123,6 @@
             box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
         }
 
-        /* Footer Box Images */
-        .footer-boxes {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px; /* Space between boxes */
-        }
-
-        .footer-box img {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 10px; /* Optional: for rounded corners */
-        }
-
         .coin-board {
             display: flex;
             align-items: center;
@@ -149,7 +134,6 @@
             height: 30px;
             margin-right: 10px;
         }
-
     </style>
 </head>
 <body>
@@ -171,7 +155,12 @@
     <div class="game-container" id="gameContainer"></div>
 
     <!-- Footer -->
-  
+    <div class="footer">
+        <div class="coin-board">
+            <img src="./PNGFILE/COIN.png" alt="Coin Icon">
+            <span id="coinCount">0</span>
+        </div>
+    </div>
 
     <script>
         const gameTitle = document.getElementById('gameTitle');
@@ -194,7 +183,7 @@
             }
         });
 
-        const symbols = ['🍎', '🍌', '🍇', '🍉', '🍒', '🍓', '🍍', '🥝', '🍑', '🥭', '🍊', '🍋', '🍈', '🍏', '🥥', '🥦', '🍄', '🥬']; 
+        const symbols = ['🍎', '🍌', '🍇', '🍉', '🍒', '🍓', '🍍', '🥝', '🍑', '🥭', '🍊', '🍋', '🍈', '🍏', '🥥', '🥦', '🍄', '🥬'];
         let tiles = [];
         let firstTile = null;
         let secondTile = null;
@@ -209,7 +198,7 @@
 
         function initializeGame() {
             matches = 0;
-            tiles = [...symbols.slice(0, 18), ...symbols.slice(0, 18)].sort(() => 0.5 - Math.random()); // Duplicate and shuffle symbols
+            tiles = [...symbols.slice(0, 18), ...symbols.slice(0, 18)].sort(() => 0.5 - Math.random());
             renderTiles();
             showAllTilesTemporarily();
         }
@@ -244,17 +233,14 @@
                 secondTile = tile;
                 if (firstTile.dataset.symbol === secondTile.dataset.symbol) {
                     setTimeout(() => {
-                        // Match found: hide the tiles
-                        firstTile.classList.add('matched');
-                        secondTile.classList.add('matched');
-                        firstTile.classList.add('hidden');  // Remove tiles from grid visually
-                        secondTile.classList.add('hidden'); // Remove tiles from grid visually
+                        firstTile.remove();
+                        secondTile.remove();
                         matches++;
                         earnCoins(5);
                         checkWin();
-                        firstTile = null;
-                        secondTile = null;
                     }, 500);
+                    firstTile = null;
+                    secondTile = null;
                 } else {
                     setTimeout(() => {
                         firstTile.classList.remove('revealed');
@@ -297,9 +283,9 @@
             }, 2000);
         }
 
-        // Start a new game
         initializeGame();
         updateCoinDisplay();
     </script>
 </body>
 </html>
+
