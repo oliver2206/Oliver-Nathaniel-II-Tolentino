@@ -42,18 +42,6 @@
             cursor: pointer;
         }
 
-        .coin-board {
-            display: flex;
-            align-items: center;
-            font-size: 18px;
-        }
-
-        .coin-board img {
-            width: 30px;
-            height: 30px;
-            margin-right: 10px;
-        }
-
         /* Dropdown Styles */
         .dropdown {
             position: absolute;
@@ -94,12 +82,12 @@
         .tile {
             width: 90px;
             height: 90px;
-            background: #cccccc;
+            background-image: url(./PNGFILE/TILE\ 9090.png);
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 36px;
+            font-size: 45px;
             font-weight: bold;
             cursor: pointer;
             transition: transform 0.3s ease;
@@ -107,19 +95,61 @@
         }
 
         .tile.revealed {
-            background: #fff;
+            background: #188d0666;
             cursor: default;
         }
 
         .tile.matched {
-            background: #4caf50;
-            color: white;
+            background: #048708;
+            color: rgb(58, 30, 30);
             cursor: default;
         }
 
         .tile.hidden {
             visibility: hidden;
         }
+
+        /* Footer Styles */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #000;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            font-size: 16px;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Footer Box Images */
+        .footer-boxes {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px; /* Space between boxes */
+        }
+
+        .footer-box img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 10px; /* Optional: for rounded corners */
+        }
+
+        .coin-board {
+            display: flex;
+            align-items: center;
+            font-size: 18px;
+        }
+
+        .coin-board img {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+        }
+
     </style>
 </head>
 <body>
@@ -127,10 +157,6 @@
         <div class="title-logo">
             <img src="./PNGFILE/TILE.png" alt="Logo" class="logo" id="logo">
             <h1 id="gameTitle">Tile Flip Challenge</h1>
-        </div>
-        <div class="coin-board">
-            <img src="https://cdn-icons-png.flaticon.com/512/833/833472.png" alt="Coin">
-            <span id="coinCount">0</span> Coins
         </div>
     </div>
 
@@ -143,6 +169,22 @@
     </div>
 
     <div class="game-container" id="gameContainer"></div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="footer-boxes">
+            <div class="footer-box"><img src="https://via.placeholder.com/80" alt="Box 1"></div>
+            <div class="footer-box"><img src="https://via.placeholder.com/80" alt="Box 1"></div>
+            <div class="footer-box"><img src="https://via.placeholder.com/80" alt="Box 2"></div>
+            <div class="footer-box"><img src="https://via.placeholder.com/80" alt="Box 3"></div>
+            <div class="footer-box">
+                <div class="coin-board">
+                    <img src="https://cdn-icons-png.flaticon.com/512/833/833472.png" alt="Coin">
+                    <span id="coinCount">0</span> Coins
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         const gameTitle = document.getElementById('gameTitle');
@@ -182,6 +224,7 @@
             matches = 0;
             tiles = [...symbols.slice(0, 18), ...symbols.slice(0, 18)].sort(() => 0.5 - Math.random()); // Duplicate and shuffle symbols
             renderTiles();
+            showAllTilesTemporarily();
         }
 
         function renderTiles() {
@@ -246,16 +289,30 @@
         function checkWin() {
             if (matches === totalPairs) {
                 setTimeout(() => {
-                    alert('You win! Bonus coins awarded.');
-                    earnCoins(20);
-                    initializeGame(); // Restart the game
+                    alert('You win!');
+                    initializeGame();
                 }, 500);
             }
         }
 
+        function showAllTilesTemporarily() {
+            const tiles = document.querySelectorAll('.tile');
+            tiles.forEach(tile => {
+                tile.classList.add('revealed');
+                tile.textContent = tile.dataset.symbol;
+            });
+
+            setTimeout(() => {
+                tiles.forEach(tile => {
+                    tile.classList.remove('revealed');
+                    tile.textContent = '';
+                });
+            }, 2000);
+        }
+
+        // Start a new game
         initializeGame();
         updateCoinDisplay();
-        
     </script>
 </body>
 </html>
