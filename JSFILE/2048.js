@@ -57,8 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Move left, up, and down functions are similar to moveRight
-    // Add the combine and swipe logic here, as you already have it in your existing code
+    // Similar moveLeft, moveUp, and moveDown functions go here
 
     // Function to handle swipe event
     function handleSwipe(e) {
