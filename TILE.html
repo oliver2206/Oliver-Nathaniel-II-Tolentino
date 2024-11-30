@@ -16,23 +16,21 @@
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
-            overflow: hidden; /* Prevent scrolling */
+            
         }
 
         h1 {
-            margin-top: 20px;
+            margin-top: 5px;
             color: white;
         }
 
         .game-container {
             display: grid;
             grid-template-columns: repeat(6, 90px);
-            gap: 10px;
+            gap: 5px;
             justify-content: center;
             margin: 50px auto;
             position: relative;
-            width: 100%;
-            height: 80vh; /* Fixed height for container */
             overflow: hidden; /* Hide fruits overflowing */
         }
 
@@ -46,7 +44,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 36px;
+            font-size: 60px;
             font-weight: bold;
             color: white;
             cursor: pointer;
@@ -75,30 +73,36 @@
         /* Fruit bounce animation */
         .fruit {
             position: absolute;
-            width: 50px;
-            height: 50px;
-            background-size: contain;
-            background-repeat: no-repeat;
-            animation: bounce 10s infinite ease-in-out;
             z-index: 1; /* Make sure fruits are behind the tiles */
+            animation: bounce 10s infinite ease-in-out;
         }
 
-        /* Keyframes for random bouncing */
+        /* Keyframes for dynamic bouncing animation */
         @keyframes bounce {
             0% {
-                transform: translate(0, 0);
+                transform: translate(var(--start-x), var(--start-y));
             }
             25% {
-                transform: translate(150px, -200px);
+                transform: translate(var(--end-x), var(--end-y));
             }
             50% {
-                transform: translate(250px, 100px);
+                transform: translate(var(--start-x), var(--end-y));
             }
             75% {
-                transform: translate(-150px, -100px);
+                transform: translate(var(--end-x), var(--start-y));
             }
             100% {
-                transform: translate(0, 0);
+                transform: translate(var(--start-x), var(--start-y));
+            }
+
+            50% {
+                /* Switch to another direction for the second bounce */
+                transform: translate(var(--bounce-end-x), var(--bounce-end-y));
+            }
+
+            100% {
+                /* Bring it back to the original position with a twist */
+                transform: translate(var(--bounce-start-x), var(--bounce-start-y));
             }
         }
 
@@ -225,26 +229,68 @@
             renderTiles(); // Render the tiles
         }
 
-        // Add fruit elements that will bounce behind the tiles
+        // Add fruit elements that will bounce behind the tiles with customized sizes and random bounce paths
         function addFruits() {
             const fruits = ['🍎', '🍌', '🍇', '🍉', '🍒', '🍓', '🍍', '🥝', '🍑', 
                             '🥭', '🍋', '🍏', '🍐', '🥥', '🥕', '🌽', '🍅', '🍆'];
 
-            // Add many more fruits to cover the background
-            for (let i = 0; i < 50; i++) {  // Create 50 fruits
+            const fruitSizes = {
+                '🍎': '6rem',  // Apple
+                '🍌': '3rem',  // Banana
+                '🍇': '2.5rem',  // Grapes
+                '🍉': '3.5rem',  // Watermelon
+                '🍒': '2rem',  // Cherry
+                '🍓': '2rem',  // Strawberry
+                '🍍': '3rem',  // Pineapple
+                '🥝': '2.5rem', // Kiwi
+                '🍑': '6rem',  // Peach
+                '🥭': '3rem',  // Mango
+                '🍋': '2.5rem',  // Lemon
+                '🍏': '2.5rem',  // Green Apple
+                '🍐': '2.5rem',  // Pear
+                '🥥': '3rem',  // Coconut
+                '🥕': '2rem',  // Carrot
+                '🌽': '3rem',  // Corn
+                '🍅': '2.5rem',  // Tomato
+                '🍆': '2rem'   // Eggplant
+            };
+
+            for (let i = 0; i < 50; i++) { // Create 50 fruits
                 const fruit = fruits[Math.floor(Math.random() * fruits.length)];
                 const fruitDiv = document.createElement('div');
                 fruitDiv.classList.add('fruit');
                 fruitDiv.textContent = fruit;
-                fruitDiv.style.left = `${Math.random() * window.innerWidth}px`; // Random horizontal position
-                fruitDiv.style.top = `${Math.random() * window.innerHeight}px`; // Random vertical position
+
+                // Apply size based on the fruit type
+                fruitDiv.style.fontSize = fruitSizes[fruit] || '2.5rem'; // Default size if not specified
+
+                // Random initial position for each fruit
+                const randomX = Math.random() * window.innerWidth;
+                const randomY = Math.random() * window.innerHeight;
+
+                // Generate additional random bounce coordinates for second bounce
+                const bounceStartX = randomX + (Math.random() * 100 - 50); // New starting point for bounce direction
+                const bounceStartY = randomY + (Math.random() * 100 - 50); // New Y direction
+                const bounceEndX = randomX + (Math.random() * 100 - 50); // New ending point for bounce
+                const bounceEndY = randomY + (Math.random() * 100 - 50); // New Y direction
+
+                // Apply dynamic CSS properties for bounce animation
+                fruitDiv.style.setProperty('--start-x', `${randomX}px`);
+                fruitDiv.style.setProperty('--start-y', `${randomY}px`);
+                fruitDiv.style.setProperty('--end-x', `${randomX + (Math.random() * 200 - 100)}px`);
+                fruitDiv.style.setProperty('--end-y', `${randomY + (Math.random() * 200 - 100)}px`);
+
+                fruitDiv.style.setProperty('--bounce-start-x', `${bounceStartX}px`);
+                fruitDiv.style.setProperty('--bounce-start-y', `${bounceStartY}px`);
+                fruitDiv.style.setProperty('--bounce-end-x', `${bounceEndX}px`);
+                fruitDiv.style.setProperty('--bounce-end-y', `${bounceEndY}px`);
+
                 gameContainer.appendChild(fruitDiv);
             }
         }
 
-        // Start the game when the page loads
+        // Initialize the game when the page loads
         window.onload = initializeGame;
-
     </script>
 </body>
 </html>
