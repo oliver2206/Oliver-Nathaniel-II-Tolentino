@@ -16,6 +16,9 @@
             background-position: center;
             background-repeat: no-repeat;
             background-size: cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         /* Header Styles */
@@ -24,20 +27,21 @@
             justify-content: space-between;
             align-items: center;
             padding: 10px 20px;
-            background: #000;
+            background: rgba(0, 0, 0, 0.7);
             color: white;
+            position: relative;
         }
 
         .header h1 {
             margin: 0;
-            font-size: 28px;
+            font-size: 1.8rem;
             font-weight: bold;
             cursor: pointer;
         }
 
         .logo {
-            width: 90px;
-            height: 90px;
+            width: 60px;
+            height: 60px;
             margin-right: 10px;
             cursor: pointer;
         }
@@ -77,6 +81,8 @@
             gap: 10px;
             justify-content: center;
             margin: 50px auto;
+            max-width: 600px;
+            width: 100%;
         }
 
         .tile {
@@ -134,6 +140,53 @@
             height: 30px;
             margin-right: 10px;
         }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .logo {
+                width: 50px;
+                height: 50px;
+            }
+
+            .game-container {
+                grid-template-columns: repeat(4, 90px); /* 4 columns */
+                grid-template-rows: repeat(4, 90px); /* 4 rows */
+            }
+
+            .tile {
+                font-size: 35px;
+                width: 70px;
+                height: 70px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.2rem;
+            }
+
+            .logo {
+                width: 40px;
+                height: 40px;
+            }
+
+            .game-container {
+                grid-template-columns: repeat(3, 70px); /* 3 columns */
+                grid-template-rows: repeat(3, 70px); /* 3 rows */
+                max-width: 450px;
+            }
+
+            .tile {
+                font-size: 30px;
+                width: 60px;
+                height: 60px;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -153,8 +206,6 @@
     </div>
 
     <div class="game-container" id="gameContainer"></div>
-
-     
 
     <script>
         const gameTitle = document.getElementById('gameTitle');
@@ -282,4 +333,5 @@
     </script>
 </body>
 </html>
+
 
