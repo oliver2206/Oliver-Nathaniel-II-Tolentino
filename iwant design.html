@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tile Flip Challenge</title>
     <style>
         /* General Styles */
@@ -30,14 +30,14 @@
 
         .header h1 {
             margin: 0;
-            font-size: 28px;
+            font-size: 1.5rem;
             font-weight: bold;
             cursor: pointer;
         }
 
         .logo {
-            width: 90px;
-            height: 90px;
+            width: 60px;
+            height: 60px;
             margin-right: 10px;
             cursor: pointer;
         }
@@ -72,22 +72,19 @@
         /* Game Container */
         .game-container {
             display: grid;
-            grid-template-columns: repeat(6, 90px); /* 6 columns */
-            grid-template-rows: repeat(6, 90px); /* 6 rows */
             gap: 10px;
             justify-content: center;
             margin: 50px auto;
+            padding: 10px;
         }
 
         .tile {
-            width: 90px;
-            height: 90px;
             background-image: url('./PNGFILE/TILE 9090.png');
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 45px;
+            font-size: 2rem;
             font-weight: bold;
             cursor: pointer;
             transition: transform 0.3s ease;
@@ -123,151 +120,39 @@
             box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
         }
 
-        .coin-board {
-            display: flex;
-            align-items: center;
-            font-size: 18px;
+        /* Responsive Styles */
+        @media screen and (max-width: 600px) {
+            .game-container {
+                grid-template-columns: repeat(4, 1fr); /* Smaller grid for small screens */
+                gap: 8px;
+            }
+            .tile {
+                font-size: 1.5rem;
+                height: 80px;
+            }
         }
 
-        .coin-board img {
-            width: 30px;
-            height: 30px;
-            margin-right: 10px;
+        @media screen and (min-width: 601px) and (max-width: 1024px) {
+            .game-container {
+                grid-template-columns: repeat(5, 1fr); /* Medium screens */
+                gap: 10px;
+            }
+            .tile {
+                font-size: 2rem;
+                height: 90px;
+            }
         }
 
-     /* iPhone 15 */
-@media screen and (min-width: 1179px) and (max-width: 1179px) and (min-height: 2556px) and (max-height: 2556px) {
-    .game-container {
-        grid-template-columns: repeat(6, 1fr);
-        gap: 15px;
-    }
-
-    .tile {
-        font-size: 2.5rem;
-    }
-}
-
-/* iPhone 14 Pro Max */
-@media screen and (min-width: 1290px) and (max-width: 1290px) and (min-height: 2796px) and (max-height: 2796px) {
-    .game-container {
-        grid-template-columns: repeat(5, 1fr);
-        gap: 12px;
-    }
-
-    .tile {
-        font-size: 2.2rem;
-    }
-}
-
-/* iPhone 14 */
-@media screen and (min-width: 1170px) and (max-width: 1170px) and (min-height: 2532px) and (max-height: 2532px) {
-    .game-container {
-        grid-template-columns: repeat(5, 1fr);
-        gap: 12px;
-    }
-
-    .tile {
-        font-size: 2rem;
-    }
-}
-
-/* iPad Pro 12.9" */
-@media screen and (min-width: 2048px) and (max-width: 2048px) and (min-height: 2732px) and (max-height: 2732px) {
-    .game-container {
-        grid-template-columns: repeat(6, 1fr);
-        gap: 20px;
-    }
-
-    .tile {
-        font-size: 3rem;
-    }
-}
-
-/* Samsung Galaxy S23 Ultra */
-@media screen and (min-width: 1440px) and (max-width: 1440px) and (min-height: 3088px) and (max-height: 3088px) {
-    .game-container {
-        grid-template-columns: repeat(6, 1fr);
-        gap: 15px;
-    }
-
-    .tile {
-        font-size: 2.3rem;
-    }
-}
-
-/* MacBook Pro 16" */
-@media screen and (min-width: 3072px) and (max-width: 3072px) and (min-height: 1920px) and (max-height: 1920px) {
-    .game-container {
-        grid-template-columns: repeat(7, 1fr);
-        gap: 25px;
-    }
-
-    .tile {
-        font-size: 3.5rem;
-    }
-}
-
-/* Google Pixel 7 Pro */
-@media screen and (min-width: 1440px) and (max-width: 1440px) and (min-height: 3120px) and (max-height: 3120px) {
-    .game-container {
-        grid-template-columns: repeat(5, 1fr);
-        gap: 10px;
-    }
-
-    .tile {
-        font-size: 2.1rem;
-    }
-}
-
-/* Surface Pro 9 */
-@media screen and (min-width: 2880px) and (max-width: 2880px) and (min-height: 1920px) and (max-height: 1920px) {
-    .game-container {
-        grid-template-columns: repeat(6, 1fr);
-        gap: 18px;
-    }
-
-    .tile {
-        font-size: 2.8rem;
-    }
-}
-
-/* Generic Small Phones */
-@media screen and (min-width: 360px) and (max-width: 480px) and (min-height: 640px) and (max-height: 800px) {
-    .game-container {
-        grid-template-columns: repeat(4, 1fr);
-        gap: 8px;
-    }
-
-    .tile {
-        font-size: 1.5rem;
-    }
-}
-
-        /* Vivo Y76 5G */
-@media screen and (min-width: 1080px) and (max-width: 1080px) and (min-height: 2408px) and (max-height: 2408px) {
-    .game-container {
-        grid-template-columns: repeat(5, 1fr); /* 5 tiles per row */
-        gap: 12px; /* Adjust spacing for the screen */
-    }
-
-    .tile {
-        font-size: 2rem; /* Adjust tile font size for better scaling */
-    }
-}
-
-        /* iPhone SE (2020/2022) */
-@media screen and (min-width: 750px) and (max-width: 750px) and (min-height: 1334px) and (max-height: 1334px) {
-    .game-container {
-        grid-template-columns: repeat(4, 1fr); /* 4 tiles per row */
-        gap: 10px; /* Adjust spacing for the smaller screen */
-    }
-
-    .tile {
-        font-size: 1.8rem; /* Slightly smaller tiles for compact display */
-    }
-}
-
-
+        @media screen and (min-width: 1025px) {
+            .game-container {
+                grid-template-columns: repeat(6, 1fr); /* Large screens */
+                gap: 15px;
+            }
+            .tile {
+                font-size: 2.5rem;
+                height: 100px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -288,8 +173,6 @@
 
     <div class="game-container" id="gameContainer"></div>
 
-     
-
     <script>
         const gameTitle = document.getElementById('gameTitle');
         const logo = document.getElementById('logo');
@@ -304,53 +187,37 @@
             dropdownMenu.style.display = dropdownMenu.style.display === 'flex' ? 'none' : 'flex';
         });
 
-        // Optional: Close the dropdown when clicking anywhere else
         document.addEventListener('click', (event) => {
             if (!event.target.closest('.header') && dropdownMenu.style.display === 'flex') {
                 dropdownMenu.style.display = 'none';
             }
         });
 
-        const symbols = ['🍎', '🍌', '🍇', '🍉', '🍒', '🍓', '🍍', '🥝', '🍑', '🥭', '🍊', '🍋', '🍈', '🍏', '🥥', '🥦', '🍄', '🥬'];
+        // Game Logic
+        const symbols = ['🍎', '🍌', '🍇', '🍉', '🍒', '🍓', '🍍', '🥝', '🍑', '🥭'];
         let tiles = [];
         let firstTile = null;
         let secondTile = null;
-        let matches = 0;
-        let totalPairs = symbols.length;
-        let coins = localStorage.getItem('coins') ? parseInt(localStorage.getItem('coins')) : 100;
-
-        function updateCoinDisplay() {
-            document.getElementById('coinCount').textContent = coins;
-            localStorage.setItem('coins', coins);
-        }
 
         function initializeGame() {
-            matches = 0;
-            tiles = [...symbols.slice(0, 18), ...symbols.slice(0, 18)].sort(() => 0.5 - Math.random());
+            tiles = [...symbols, ...symbols].sort(() => Math.random() - 0.5);
             renderTiles();
-            showAllTilesTemporarily();
         }
 
         function renderTiles() {
             const gameContainer = document.getElementById('gameContainer');
             gameContainer.innerHTML = '';
             tiles.forEach((symbol, index) => {
-                const tile = createTile(symbol, index);
+                const tile = document.createElement('div');
+                tile.classList.add('tile');
+                tile.dataset.symbol = symbol;
+                tile.addEventListener('click', () => handleTileClick(tile));
                 gameContainer.appendChild(tile);
             });
         }
 
-        function createTile(symbol, index) {
-            const tile = document.createElement('div');
-            tile.classList.add('tile');
-            tile.dataset.symbol = symbol;
-            tile.dataset.index = index;
-            tile.addEventListener('click', () => handleTileClick(tile));
-            return tile;
-        }
-
         function handleTileClick(tile) {
-            if (tile.classList.contains('revealed') || tile.classList.contains('matched') || secondTile) return;
+            if (tile.classList.contains('revealed')) return;
 
             tile.classList.add('revealed');
             tile.textContent = tile.dataset.symbol;
@@ -360,13 +227,8 @@
             } else {
                 secondTile = tile;
                 if (firstTile.dataset.symbol === secondTile.dataset.symbol) {
-                    setTimeout(() => {
-                        firstTile.remove();
-                        secondTile.remove();
-                        matches++;
-                        earnCoins(5);
-                        checkWin();
-                    }, 500);
+                    firstTile.classList.add('matched');
+                    secondTile.classList.add('matched');
                     firstTile = null;
                     secondTile = null;
                 } else {
@@ -382,38 +244,7 @@
             }
         }
 
-        function earnCoins(amount) {
-            coins += amount;
-            updateCoinDisplay();
-        }
-
-        function checkWin() {
-            if (matches === totalPairs) {
-                setTimeout(() => {
-                    alert('You win!');
-                    initializeGame();
-                }, 500);
-            }
-        }
-
-        function showAllTilesTemporarily() {
-            const tiles = document.querySelectorAll('.tile');
-            tiles.forEach(tile => {
-                tile.classList.add('revealed');
-                tile.textContent = tile.dataset.symbol;
-            });
-
-            setTimeout(() => {
-                tiles.forEach(tile => {
-                    tile.classList.remove('revealed');
-                    tile.textContent = '';
-                });
-            }, 2000);
-        }
-  
-        
         initializeGame();
-        updateCoinDisplay();
     </script>
 </body>
-</html> 
+</html>
