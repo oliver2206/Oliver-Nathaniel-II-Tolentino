@@ -135,28 +135,114 @@
             margin-right: 10px;
         }
 
-        @media screen and (min-width: 1179px) and (max-width: 1179px) and (min-height: 2556px) and (max-height: 2556px) {
-            .game-container {
-                grid-template-columns: repeat(6, 1fr); /* 6 tiles per row */
-                gap: 15px; /* Increased spacing for larger screen */
-            }
+     /* iPhone 15 */
+@media screen and (min-width: 1179px) and (max-width: 1179px) and (min-height: 2556px) and (max-height: 2556px) {
+    .game-container {
+        grid-template-columns: repeat(6, 1fr);
+        gap: 15px;
+    }
 
-            .tile {
-                font-size: 2.5rem; /* Slightly larger tiles */
-            }
-        }
+    .tile {
+        font-size: 2.5rem;
+    }
+}
 
-        @media screen and (min-width: 1290px) and (max-width: 1290px) and (min-height: 2796px) and (max-height: 2796px) {
-            .game-container {
-                grid-template-columns: repeat(5, 1fr); /* 5 tiles per row */
-                gap: 12px; /* Adjust spacing for a balanced layout */
-            }
-        
-            .tile {
-                font-size: 2.2rem; /* Adjust tile font size for better scaling */
-            }
-        }
-        
+/* iPhone 14 Pro Max */
+@media screen and (min-width: 1290px) and (max-width: 1290px) and (min-height: 2796px) and (max-height: 2796px) {
+    .game-container {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 12px;
+    }
+
+    .tile {
+        font-size: 2.2rem;
+    }
+}
+
+/* iPhone 14 */
+@media screen and (min-width: 1170px) and (max-width: 1170px) and (min-height: 2532px) and (max-height: 2532px) {
+    .game-container {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 12px;
+    }
+
+    .tile {
+        font-size: 2rem;
+    }
+}
+
+/* iPad Pro 12.9" */
+@media screen and (min-width: 2048px) and (max-width: 2048px) and (min-height: 2732px) and (max-height: 2732px) {
+    .game-container {
+        grid-template-columns: repeat(6, 1fr);
+        gap: 20px;
+    }
+
+    .tile {
+        font-size: 3rem;
+    }
+}
+
+/* Samsung Galaxy S23 Ultra */
+@media screen and (min-width: 1440px) and (max-width: 1440px) and (min-height: 3088px) and (max-height: 3088px) {
+    .game-container {
+        grid-template-columns: repeat(6, 1fr);
+        gap: 15px;
+    }
+
+    .tile {
+        font-size: 2.3rem;
+    }
+}
+
+/* MacBook Pro 16" */
+@media screen and (min-width: 3072px) and (max-width: 3072px) and (min-height: 1920px) and (max-height: 1920px) {
+    .game-container {
+        grid-template-columns: repeat(7, 1fr);
+        gap: 25px;
+    }
+
+    .tile {
+        font-size: 3.5rem;
+    }
+}
+
+/* Google Pixel 7 Pro */
+@media screen and (min-width: 1440px) and (max-width: 1440px) and (min-height: 3120px) and (max-height: 3120px) {
+    .game-container {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 10px;
+    }
+
+    .tile {
+        font-size: 2.1rem;
+    }
+}
+
+/* Surface Pro 9 */
+@media screen and (min-width: 2880px) and (max-width: 2880px) and (min-height: 1920px) and (max-height: 1920px) {
+    .game-container {
+        grid-template-columns: repeat(6, 1fr);
+        gap: 18px;
+    }
+
+    .tile {
+        font-size: 2.8rem;
+    }
+}
+
+/* Generic Small Phones */
+@media screen and (min-width: 360px) and (max-width: 480px) and (min-height: 640px) and (max-height: 800px) {
+    .game-container {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+    }
+
+    .tile {
+        font-size: 1.5rem;
+    }
+}
+
     </style>
 </head>
 <body>
