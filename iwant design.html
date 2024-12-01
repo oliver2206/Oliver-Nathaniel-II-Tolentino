@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tile Flip Challenge</title>
     <style>
         /* General Styles */
@@ -30,14 +30,14 @@
 
         .header h1 {
             margin: 0;
-            font-size: 1.5rem;
+            font-size: 28px;
             font-weight: bold;
             cursor: pointer;
         }
 
         .logo {
-            width: 60px;
-            height: 60px;
+            width: 90px;
+            height: 90px;
             margin-right: 10px;
             cursor: pointer;
         }
@@ -72,19 +72,22 @@
         /* Game Container */
         .game-container {
             display: grid;
+            grid-template-columns: repeat(6, 90px); /* 6 columns */
+            grid-template-rows: repeat(6, 90px); /* 6 rows */
             gap: 10px;
             justify-content: center;
             margin: 50px auto;
-            padding: 10px;
         }
 
         .tile {
-            background-image: url('./PNGFILE/TILE 9090.png');
+            width: 90px;
+            height: 90px;
+            background-image: url('./PNGFILE');
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
+            font-size: 45px;
             font-weight: bold;
             cursor: pointer;
             transition: transform 0.3s ease;
@@ -120,39 +123,19 @@
             box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
         }
 
-        /* Responsive Styles */
-        @media screen and (max-width: 600px) {
-            .game-container {
-                grid-template-columns: repeat(4, 1fr); /* Smaller grid for small screens */
-                gap: 8px;
-            }
-            .tile {
-                font-size: 1.5rem;
-                height: 80px;
-            }
+        .coin-board {
+            display: flex;
+            align-items: center;
+            font-size: 18px;
         }
 
-        @media screen and (min-width: 601px) and (max-width: 1024px) {
-            .game-container {
-                grid-template-columns: repeat(5, 1fr); /* Medium screens */
-                gap: 10px;
-            }
-            .tile {
-                font-size: 2rem;
-                height: 90px;
-            }
+        .coin-board img {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
         }
 
-        @media screen and (min-width: 1025px) {
-            .game-container {
-                grid-template-columns: repeat(6, 1fr); /* Large screens */
-                gap: 15px;
-            }
-            .tile {
-                font-size: 2.5rem;
-                height: 100px;
-            }
-        }
+
     </style>
 </head>
 <body>
@@ -173,6 +156,8 @@
 
     <div class="game-container" id="gameContainer"></div>
 
+     
+
     <script>
         const gameTitle = document.getElementById('gameTitle');
         const logo = document.getElementById('logo');
@@ -187,37 +172,53 @@
             dropdownMenu.style.display = dropdownMenu.style.display === 'flex' ? 'none' : 'flex';
         });
 
+        // Optional: Close the dropdown when clicking anywhere else
         document.addEventListener('click', (event) => {
             if (!event.target.closest('.header') && dropdownMenu.style.display === 'flex') {
                 dropdownMenu.style.display = 'none';
             }
         });
 
-        // Game Logic
-        const symbols = ['🍎', '🍌', '🍇', '🍉', '🍒', '🍓', '🍍', '🥝', '🍑', '🥭'];
+        const symbols = ['🍎', '🍌', '🍇', '🍉', '🍒', '🍓', '🍍', '🥝', '🍑', '🥭', '🍊', '🍋', '🍈', '🍏', '🥥', '🥦', '🍄', '🥬'];
         let tiles = [];
         let firstTile = null;
         let secondTile = null;
+        let matches = 0;
+        let totalPairs = symbols.length;
+        let coins = localStorage.getItem('coins') ? parseInt(localStorage.getItem('coins')) : 100;
+
+        function updateCoinDisplay() {
+            document.getElementById('coinCount').textContent = coins;
+            localStorage.setItem('coins', coins);
+        }
 
         function initializeGame() {
-            tiles = [...symbols, ...symbols].sort(() => Math.random() - 0.5);
+            matches = 0;
+            tiles = [...symbols.slice(0, 18), ...symbols.slice(0, 18)].sort(() => 0.5 - Math.random());
             renderTiles();
+            showAllTilesTemporarily();
         }
 
         function renderTiles() {
             const gameContainer = document.getElementById('gameContainer');
             gameContainer.innerHTML = '';
             tiles.forEach((symbol, index) => {
-                const tile = document.createElement('div');
-                tile.classList.add('tile');
-                tile.dataset.symbol = symbol;
-                tile.addEventListener('click', () => handleTileClick(tile));
+                const tile = createTile(symbol, index);
                 gameContainer.appendChild(tile);
             });
         }
 
+        function createTile(symbol, index) {
+            const tile = document.createElement('div');
+            tile.classList.add('tile');
+            tile.dataset.symbol = symbol;
+            tile.dataset.index = index;
+            tile.addEventListener('click', () => handleTileClick(tile));
+            return tile;
+        }
+
         function handleTileClick(tile) {
-            if (tile.classList.contains('revealed')) return;
+            if (tile.classList.contains('revealed') || tile.classList.contains('matched') || secondTile) return;
 
             tile.classList.add('revealed');
             tile.textContent = tile.dataset.symbol;
@@ -227,8 +228,13 @@
             } else {
                 secondTile = tile;
                 if (firstTile.dataset.symbol === secondTile.dataset.symbol) {
-                    firstTile.classList.add('matched');
-                    secondTile.classList.add('matched');
+                    setTimeout(() => {
+                        firstTile.remove();
+                        secondTile.remove();
+                        matches++;
+                        earnCoins(5);
+                        checkWin();
+                    }, 500);
                     firstTile = null;
                     secondTile = null;
                 } else {
@@ -244,7 +250,38 @@
             }
         }
 
+        function earnCoins(amount) {
+            coins += amount;
+            updateCoinDisplay();
+        }
+
+        function checkWin() {
+            if (matches === totalPairs) {
+                setTimeout(() => {
+                    alert('You win!');
+                    initializeGame();
+                }, 500);
+            }
+        }
+
+        function showAllTilesTemporarily() {
+            const tiles = document.querySelectorAll('.tile');
+            tiles.forEach(tile => {
+                tile.classList.add('revealed');
+                tile.textContent = tile.dataset.symbol;
+            });
+
+            setTimeout(() => {
+                tiles.forEach(tile => {
+                    tile.classList.remove('revealed');
+                    tile.textContent = '';
+                });
+            }, 2000);
+        }
+  
+        
         initializeGame();
+        updateCoinDisplay();
     </script>
 </body>
-</html>
+</html> 
